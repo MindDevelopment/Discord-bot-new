@@ -34,8 +34,9 @@ const io = socketIo(server);
 app.use(express.static(path.join(__dirname, 'dashboard/public')));
 
 // Stel een route in om toegang te krijgen tot de dashboardpagina
+// Pas het pad naar je index.html bestand aan
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dashboard', 'index.html'));
+  res.sendFile(path.join('D:', 'Github', 'Discord-bot-new', 'dashboard', 'src', 'pages', 'api', 'auth', 'index.html'));
 });
 
 // Stel een route in voor socket.io communicatie (als dat nodig is)
@@ -57,4 +58,3 @@ server.listen(PORT, () => {
 client.once('ready', () => {
   console.log(`Bot is ingelogd als ${client.user.tag}`);
 });
-
