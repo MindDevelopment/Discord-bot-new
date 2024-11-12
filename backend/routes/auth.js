@@ -1,5 +1,6 @@
 // routes/auth.js
 const express = require('express');
+const axios = require('axios');
 const router = express.Router();
 
 router.get('/login', (req, res) => {
@@ -7,13 +8,12 @@ router.get('/login', (req, res) => {
     res.redirect(redirectUri);
 });
 
-module.exports = router;
-
 router.get('/callback', async (req, res) => {
     const code = req.query.code;
     if (!code) return res.send("Geen code ontvangen");
 
     try {
+        // Verkrijg de toegangstoken van Discord
         const tokenData = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
             client_id: process.env.CLIENT_ID,
             client_secret: process.env.CLIENT_SECRET,
@@ -26,6 +26,7 @@ router.get('/callback', async (req, res) => {
             },
         });
 
+        // Sla de toegangstoken op in de sessie
         req.session.access_token = tokenData.data.access_token;
         res.redirect('/dashboard'); // Doorsturen naar het dashboard
     } catch (err) {
@@ -34,22 +35,4 @@ router.get('/callback', async (req, res) => {
     }
 });
 
-const axios = require('axios');
-
-router.get('/dashboard', async (req, res) => {
-    if (!req.session.access_token) return res.redirect('/login');
-
-    try {
-        const userData = await axios.get('https://discord.com/api/users/@me', {
-            headers: {
-                Authorization: `Bearer ${req.session.access_token}`
-            }
-        });
-
-        res.render('dashboard', { user: userData.data });
-    } catch (err) {
-        console.error("Error bij ophalen gebruiker:", err);
-        res.redirect('/login');
-    }
-});
-
+module.exports = router;
