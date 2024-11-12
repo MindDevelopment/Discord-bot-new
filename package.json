@@ -17,6 +17,7 @@
     "discord-api-types": "^0.37.103",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "fs": "^0.0.1-security",

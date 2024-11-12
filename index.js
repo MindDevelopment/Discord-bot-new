@@ -1,60 +1,55 @@
-// index.js
-
-// Importeer de benodigde pakketten
-const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
 const path = require('path');
-const http = require('http');
-const socketIo = require('socket.io');
-
-// Importeer je bot code
-const bot = require('./bot.js'); // Zorg ervoor dat dit bestand je botlogica bevat
-
-// Maak een nieuwe Discord client aan
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
-});
-
-// Voeg de bot token toe
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-
-// Bot inloggen
-client.login(DISCORD_TOKEN);
-
-// Maak een express server voor het dashboard
+const { Client } = require('discord.js');
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
 
-// Stel statische bestanden in voor het dashboard (je dashboard-bestanden)
-app.use(express.static(path.join(__dirname, 'dashboard/public')));
+// Gebruik ejs als view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Stel een route in om toegang te krijgen tot de dashboardpagina
-// Pas het pad naar je index.html bestand aan
+// Bodyparser middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Sessies voor gebruikersauthenticatie
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Initialiseer Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join('D:', 'Github', 'Discord-bot-new', 'dashboard', 'src', 'pages', 'api', 'auth', 'index.html'));
+    if (req.isAuthenticated()) {
+        res.render('dashboard', { user: req.user });
+    } else {
+        res.render('index');
+    }
 });
 
-// Stel een route in voor socket.io communicatie (als dat nodig is)
-io.on('connection', (socket) => {
-  console.log('Een gebruiker is verbonden');
-  
-  socket.on('disconnect', () => {
-    console.log('Een gebruiker is verbroken');
-  });
+// Login route
+app.get('/login', (req, res) => {
+    res.render('login');
 });
 
-// Start de webserver (bijvoorbeeld op poort 3000)
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Dashboard draait op http://localhost:${PORT}`);
+// Logout route
+app.get('/logout', (req, res) => {
+    req.logout(err => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/');
+    });
 });
 
-// Bot event: bot is online
-client.once('ready', () => {
-  console.log(`Bot is ingelogd als ${client.user.tag}`);
+// Start de server
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server draait op http://localhost:${port}`);
 });
