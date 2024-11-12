@@ -1,36 +1,30 @@
 const express = require('express');
 const session = require('express-session');
-const passport = require('passport');
 const path = require('path');
-const { Client } = require('discord.js');
 const app = express();
 
-// Gebruik ejs als view engine
+// Stel de sessie in
+app.use(session({
+    secret: 'jouw_geheime_willekeurige_string',  // Vervang dit door een veilige, willekeurige string
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }  // Zet secure op true in een HTTPS-omgeving
+}));
+
+// Stel de view engine in voor ejs
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Bodyparser middleware
-app.use(express.urlencoded({ extended: true }));
+// Stel de public folder in
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Stel de body parser in voor JSON en URL-encoded formuliervelden
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Sessies voor gebruikersauthenticatie
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}));
-
-// Initialiseer Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Root route
+// Homepage route
 app.get('/', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render('dashboard', { user: req.user });
-    } else {
-        res.render('index');
-    }
+    res.render('index', { user: req.session.user });
 });
 
 // Login route
@@ -38,18 +32,6 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
-// Logout route
-app.get('/logout', (req, res) => {
-    req.logout(err => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/');
-    });
-});
-
-// Start de server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server draait op http://localhost:${port}`);
+app.listen(3000, () => {
+    console.log('Server draait op http://localhost:3000');
 });
