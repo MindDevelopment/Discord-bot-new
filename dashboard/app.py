@@ -1,11 +1,15 @@
 from flask import Flask, redirect, url_for, session, render_template, request
-import subprocess
 import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Zorg ervoor dat je een geheime sleutel hebt voor sessies
 
-# Config laden
+# Tijdelijke lijst met gebruikers (in plaats van Discord login)
+users = {
+    "Daan": "Daan123"  # Voeg je tijdelijke gebruikersnaam en wachtwoord toe
+}
+
+# Config laden (je huidige config blijft hetzelfde)
 with open('./config/config.json', 'r') as config_file:
     config = json.load(config_file)
 
@@ -13,54 +17,22 @@ CLIENT_ID = config['client_id']
 CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = config['redirect_uri']
 
-# PM2 commando's
-def pm2_start():
-    subprocess.run(['pm2', 'start', 'bot.py'], check=True)
-
-def pm2_stop():
-    subprocess.run(['pm2', 'stop', 'bot.py'], check=True)
-
-def pm2_restart():
-    subprocess.run(['pm2', 'restart', 'bot.py'], check=True)
-
 # Login route
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    auth_url = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&scope=bot+identify&response_type=code&redirect_uri={REDIRECT_URI}"
-    return redirect(auth_url)
-
-# Callback route
-@app.route('/callback')
-def callback():
-    code = request.args.get('code')  # Haal de code op uit de URL
-    guild_id = request.args.get('guild_id')
-    permissions = request.args.get('permissions')
-
-    # Verkrijg token van Discord
-    token_url = 'https://discord.com/api/oauth2/token'
-    data = {
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'code': code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': REDIRECT_URI,
-        'scope': 'bot+identify'
-    }
-    response = requests.post(token_url, data=data)
-    access_token = response.json().get('access_token')
-
-    # Verkrijg gebruikersinformatie
-    user_url = 'https://discord.com/api/v9/users/@me'
-    headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
-    user_info = requests.get(user_url, headers=headers).json()
-
-    # Sla gebruikersinformatie op in de sessie
-    session['user'] = user_info
-    session['access_token'] = access_token
-
-    return redirect(url_for('index', user=user_info))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Controleer of de gebruikersnaam en wachtwoord correct zijn
+        if users.get(username) == password:
+            # Als de inloggegevens juist zijn, sla deze op in de sessie
+            session['user'] = username
+            return redirect(url_for('index'))
+        else:
+            # Als de inloggegevens verkeerd zijn, geef een foutmelding weer
+            return "Foutieve gebruikersnaam of wachtwoord!"
+    return render_template('login.html')  # Toon het loginformulier
 
 # Index route
 @app.route('/')
@@ -69,33 +41,6 @@ def index():
         return redirect(url_for('login'))
     user = session['user']
     return render_template('index.html', user=user)
-
-# Start route voor de bot
-@app.route('/start_bot', methods=['POST'])
-def start_bot():
-    try:
-        pm2_start()
-        return redirect(url_for('index'))
-    except Exception as e:
-        return f"Error starting bot: {e}"
-
-# Stop route voor de bot
-@app.route('/stop_bot', methods=['POST'])
-def stop_bot():
-    try:
-        pm2_stop()
-        return redirect(url_for('index'))
-    except Exception as e:
-        return f"Error stopping bot: {e}"
-
-# Restart route voor de bot
-@app.route('/restart_bot', methods=['POST'])
-def restart_bot():
-    try:
-        pm2_restart()
-        return redirect(url_for('index'))
-    except Exception as e:
-        return f"Error restarting bot: {e}"
 
 # Logout route
 @app.route('/logout')
