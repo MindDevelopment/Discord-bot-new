@@ -6,20 +6,21 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h2>Welcome, {{ user }}</h2>
-    <form action="/start_bot" method="POST" style="display:inline;">
+    <nav>
+        <a href="/dashboard">Home</a>
+        <a href="/logout" style="float:right;">Logout</a>
+    </nav>
+    <h1>Welcome, {{ user }}</h1>
+    <h2>Console Output:</h2>
+    <pre>{{ console_output }}</pre>
+    <form method="POST" action="/start_bot">
         <button type="submit">Start Bot</button>
     </form>
-    <form action="/stop_bot" method="POST" style="display:inline;">
+    <form method="POST" action="/stop_bot">
         <button type="submit">Stop Bot</button>
     </form>
-    <form action="/restart_bot" method="POST" style="display:inline;">
+    <form method="POST" action="/restart_bot">
         <button type="submit">Restart Bot</button>
     </form>
-    <form action="/logout" method="GET" style="display:inline;">
-        <button type="submit">Logout</button>
-    </form>
-    <h3>Console Output:</h3>
-    <pre>{{ console_output }}</pre>
 </body>
 </html>
