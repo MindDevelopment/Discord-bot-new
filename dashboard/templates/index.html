@@ -11,10 +11,27 @@
         <h1>Welkom bij het Discord Bot Dashboard</h1>
 
         {% if user %}
-        <p>Hallo, {{ user }}!</p> <!-- Gebruiker verwelkomen met hun naam -->
-        <p><a href="{{ url_for('logout') }}">Uitloggen</a></p> <!-- Uitloggen link -->
+        <p>Hallo, {{ user['username'] }}#{{ user['discriminator'] }}!</p>
+        <p><a href="{{ url_for('logout') }}">Uitloggen</a></p>
+        
+        <!-- Start / Stop / Restart knoppen -->
+        <form action="{{ url_for('start_bot') }}" method="post">
+            <button type="submit">Start Bot</button>
+        </form>
+        
+        <form action="{{ url_for('stop_bot') }}" method="post">
+            <button type="submit">Stop Bot</button>
+        </form>
+        
+        <form action="{{ url_for('restart_bot') }}" method="post">
+            <button type="submit">Restart Bot</button>
+        </form>
+
+        <h2>Bot Console Output</h2>
+        <pre>{{ console_output }}</pre>
+        
         {% else %}
-        <p>Je bent niet ingelogd! <a href="{{ url_for('login') }}">Log in</a></p>
+        <p>Je bent niet ingelogd! <a href="{{ url_for('login') }}">Log in met Discord</a></p>
         {% endif %}
     </div>
 </body>
