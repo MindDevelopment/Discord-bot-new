@@ -15,6 +15,18 @@
         <p>Hallo, {{ user['username'] }}#{{ user['discriminator'] }}!</p>
         <img src="https://cdn.discordapp.com/avatars/{{ user['id'] }}/{{ user['avatar'] }}.png" alt="User Avatar" width="100">
         <p><a href="{{ url_for('logout') }}">Uitloggen</a></p>
+        
+        <h2>Bot Status</h2>
+        <!-- Knoppen voor het beheren van de bot -->
+        <a href="{{ url_for('start') }}">
+            <button>Start Bot</button>
+        </a>
+        <a href="{{ url_for('stop') }}">
+            <button>Stop Bot</button>
+        </a>
+        <a href="{{ url_for('restart') }}">
+            <button>Herstart Bot</button>
+        </a>
         {% else %}
         <p>Je bent niet ingelogd! <a href="{{ url_for('login') }}">Log in met Discord</a></p>
         {% endif %}

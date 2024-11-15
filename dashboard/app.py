@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, session, render_template, request
 import requests
 import json
+import subprocess  # Voeg subprocess toe voor het starten, stoppen en herstarten van de bot
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Zorg ervoor dat je een geheime sleutel hebt voor sessies
@@ -12,6 +13,9 @@ with open('./config/config.json', 'r') as config_file:
 CLIENT_ID = config['client_id']
 CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = config['redirect_uri']
+
+# Subprocess variabele om de bot te beheren
+bot_process = None  # Houdt de bot subprocess bij
 
 # Login route
 @app.route('/login')
@@ -65,6 +69,37 @@ def index():
 def logout():
     session.clear()  # Verwijder alle sessie-informatie
     return redirect(url_for('login'))  # Redirect naar de loginpagina
+
+# Start de bot
+@app.route('/start')
+def start():
+    global bot_process
+    if bot_process is None or bot_process.poll() is not None:
+        bot_process = subprocess.Popen(['python', 'bot.py'])  # Vervang dit door het juiste pad naar je botbestand
+        return redirect(url_for('index'))
+    else:
+        return "Bot is al gestart!", 400
+
+# Stop de bot
+@app.route('/stop')
+def stop():
+    global bot_process
+    if bot_process is not None:
+        bot_process.terminate()  # Stop de bot
+        bot_process = None
+        return redirect(url_for('index'))
+    else:
+        return "Bot draait niet!", 400
+
+# Herstart de bot
+@app.route('/restart')
+def restart():
+    global bot_process
+    if bot_process is not None:
+        bot_process.terminate()  # Stop de bot
+        bot_process = None
+    bot_process = subprocess.Popen(['python', 'bot.py'])  # Herstart de bot
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
