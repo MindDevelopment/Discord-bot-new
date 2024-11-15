@@ -1,0 +1,23 @@
+<!-- dashboard/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welkom bij het Discord Bot Dashboard</h1>
+
+        {% if user %}
+        <p>Hallo, {{ user['username'] }}#{{ user['discriminator'] }}!</p>
+        <img src="https://cdn.discordapp.com/avatars/{{ user['id'] }}/{{ user['avatar'] }}.png" alt="User Avatar" width="100">
+        <p><a href="{{ url_for('logout') }}">Uitloggen</a></p>
+        {% else %}
+        <p>Je bent niet ingelogd! <a href="{{ url_for('login') }}">Log in met Discord</a></p>
+        {% endif %}
+    </div>
+</body>
+</html>

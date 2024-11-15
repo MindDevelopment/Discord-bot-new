@@ -1,0 +1,11 @@
+{
+  "token": "",
+  "prefix": "!",
+  "activity": "Type !help for commands",
+  "client_id": "",
+  "client_secret": "",
+  "redirect_uri": "http://localhost:5000/callback",
+  "auth_url": "https://discord.com/oauth2/authorize?client_id={client_id}&scope=bot+identify&response_type=code&redirect_uri={redirect_uri}",
+  "token_url": "https://discord.com/api/oauth2/token",
+  "user_url": "https://discord.com/api/v9/users/@me"
+}
