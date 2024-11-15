@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ user }}!</h1>
+
+    <h2>Bot Console Output</h2>
+    <pre>{{ console_output }}</pre>
+
+    <form action="/start_bot" method="POST">
+        <button type="submit">Start Bot</button>
+    </form>
+
+    <form action="/stop_bot" method="POST">
+        <button type="submit">Stop Bot</button>
+    </form>
+
+    <form action="/restart_bot" method="POST">
+        <button type="submit">Restart Bot</button>
+    </form>
+
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>
