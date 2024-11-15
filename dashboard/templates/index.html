@@ -1,4 +1,3 @@
-<!-- dashboard/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,18 +14,17 @@
         <p>Hallo, {{ user['username'] }}#{{ user['discriminator'] }}!</p>
         <img src="https://cdn.discordapp.com/avatars/{{ user['id'] }}/{{ user['avatar'] }}.png" alt="User Avatar" width="100">
         <p><a href="{{ url_for('logout') }}">Uitloggen</a></p>
-        
-        <h2>Bot Status</h2>
-        <!-- Knoppen voor het beheren van de bot -->
-        <a href="{{ url_for('start') }}">
-            <button>Start Bot</button>
-        </a>
-        <a href="{{ url_for('stop') }}">
-            <button>Stop Bot</button>
-        </a>
-        <a href="{{ url_for('restart') }}">
-            <button>Herstart Bot</button>
-        </a>
+
+        <!-- Knoppen om de bot te starten, stoppen of herstarten -->
+        <form action="{{ url_for('start_bot') }}" method="POST">
+            <button type="submit">Start Bot</button>
+        </form>
+        <form action="{{ url_for('stop_bot') }}" method="POST">
+            <button type="submit">Stop Bot</button>
+        </form>
+        <form action="{{ url_for('restart_bot') }}" method="POST">
+            <button type="submit">Herstart Bot</button>
+        </form>
         {% else %}
         <p>Je bent niet ingelogd! <a href="{{ url_for('login') }}">Log in met Discord</a></p>
         {% endif %}

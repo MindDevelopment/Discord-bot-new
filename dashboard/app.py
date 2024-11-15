@@ -1,7 +1,6 @@
 from flask import Flask, redirect, url_for, session, render_template, request
-import requests
+import subprocess
 import json
-import subprocess  # Voeg subprocess toe voor het starten, stoppen en herstarten van de bot
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Zorg ervoor dat je een geheime sleutel hebt voor sessies
@@ -14,8 +13,15 @@ CLIENT_ID = config['client_id']
 CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = config['redirect_uri']
 
-# Subprocess variabele om de bot te beheren
-bot_process = None  # Houdt de bot subprocess bij
+# PM2 commando's
+def pm2_start():
+    subprocess.run(['pm2', 'start', 'bot.py'], check=True)
+
+def pm2_stop():
+    subprocess.run(['pm2', 'stop', 'bot.py'], check=True)
+
+def pm2_restart():
+    subprocess.run(['pm2', 'restart', 'bot.py'], check=True)
 
 # Login route
 @app.route('/login')
@@ -64,42 +70,38 @@ def index():
     user = session['user']
     return render_template('index.html', user=user)
 
+# Start route voor de bot
+@app.route('/start_bot', methods=['POST'])
+def start_bot():
+    try:
+        pm2_start()
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"Error starting bot: {e}"
+
+# Stop route voor de bot
+@app.route('/stop_bot', methods=['POST'])
+def stop_bot():
+    try:
+        pm2_stop()
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"Error stopping bot: {e}"
+
+# Restart route voor de bot
+@app.route('/restart_bot', methods=['POST'])
+def restart_bot():
+    try:
+        pm2_restart()
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"Error restarting bot: {e}"
+
 # Logout route
 @app.route('/logout')
 def logout():
     session.clear()  # Verwijder alle sessie-informatie
     return redirect(url_for('login'))  # Redirect naar de loginpagina
-
-# Start de bot
-@app.route('/start')
-def start():
-    global bot_process
-    if bot_process is None or bot_process.poll() is not None:
-        bot_process = subprocess.Popen(['python', 'bot.py'])  # Vervang dit door het juiste pad naar je botbestand
-        return redirect(url_for('index'))
-    else:
-        return "Bot is al gestart!", 400
-
-# Stop de bot
-@app.route('/stop')
-def stop():
-    global bot_process
-    if bot_process is not None:
-        bot_process.terminate()  # Stop de bot
-        bot_process = None
-        return redirect(url_for('index'))
-    else:
-        return "Bot draait niet!", 400
-
-# Herstart de bot
-@app.route('/restart')
-def restart():
-    global bot_process
-    if bot_process is not None:
-        bot_process.terminate()  # Stop de bot
-        bot_process = None
-    bot_process = subprocess.Popen(['python', 'bot.py'])  # Herstart de bot
-    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
