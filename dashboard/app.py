@@ -23,7 +23,7 @@ def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
 def get_console_output():
-    """Haal de laatste 10 regels logs op van de bot."""
+    """Haal de laatste 10 regels logs op van het PM2-proces."""
     try:
         process = subprocess.Popen(
             [PM2_PATH, 'logs', 'discord-bot', '--lines', '10'], 
@@ -31,7 +31,7 @@ def get_console_output():
             stderr=subprocess.PIPE, 
             text=True
         )
-        output, _ = process.communicate(timeout=10)  # Timeout verhoogd naar 10 seconden
+        output, _ = process.communicate(timeout=10)  # Timeout op 10 seconden
         return output.strip() if output else "No logs available."
     except subprocess.TimeoutExpired:
         return "Error: Unable to retrieve logs within the timeout period."
