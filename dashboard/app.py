@@ -21,19 +21,21 @@ CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = config['redirect_uri']
 
 # PM2 commando's
+PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan naar jouw situatie
+
 def pm2_start():
-    return subprocess.Popen(['pm2', 'start', 'bot.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return subprocess.Popen([PM2_PATH, 'start', 'bot.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def pm2_stop():
-    subprocess.run(['pm2', 'stop', 'bot.py'], check=True)
+    subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
 
 def pm2_restart():
-    subprocess.run(['pm2', 'restart', 'bot.py'], check=True)
+    subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
 def get_console_output():
     """ Haal de laatste uitvoer op van de bot via PM2 logs """
-    process = subprocess.Popen(['pm2', 'logs', 'discord-bot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    output, errors = process.communicate()
+    process = subprocess.Popen([PM2_PATH, 'logs', 'discord-bot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    output, _ = process.communicate()
     return output
 
 # Inlog route
