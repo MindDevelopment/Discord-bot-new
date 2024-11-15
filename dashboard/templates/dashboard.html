@@ -13,14 +13,16 @@
     <h1>Welcome, {{ user }}</h1>
     <h2>Console Output:</h2>
     <pre>{{ console_output }}</pre>
-    <form method="POST" action="/start_bot">
-        <button type="submit">Start Bot</button>
-    </form>
-    <form method="POST" action="/stop_bot">
-        <button type="submit">Stop Bot</button>
-    </form>
-    <form method="POST" action="/restart_bot">
-        <button type="submit">Restart Bot</button>
-    </form>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <form method="POST" action="/start_bot">
+            <button type="submit">Start Bot</button>
+        </form>
+        <form method="POST" action="/stop_bot">
+            <button type="submit">Stop Bot</button>
+        </form>
+        <form method="POST" action="/restart_bot">
+            <button type="submit">Restart Bot</button>
+        </form>
+    </div>
 </body>
 </html>

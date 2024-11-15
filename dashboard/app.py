@@ -26,17 +26,18 @@ def get_console_output():
     """Haal de laatste 10 regels logs op van de bot."""
     try:
         process = subprocess.Popen(
-            [PM2_PATH, 'logs', 'discord-bot', '--lines', '10'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            [PM2_PATH, 'logs', 'discord-bot', '--lines', '10'], 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
             text=True
         )
-        output, _ = process.communicate(timeout=5)
-        return output.strip()
+        output, _ = process.communicate(timeout=10)  # Timeout verhoogd naar 10 seconden
+        return output.strip() if output else "No logs available."
     except subprocess.TimeoutExpired:
-        return "Error: Log retrieval timed out."
+        return "Error: Unable to retrieve logs within the timeout period."
     except Exception as e:
         return f"Unexpected Error: {str(e)}"
+
 
 # Routes
 @app.route('/')
