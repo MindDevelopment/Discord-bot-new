@@ -1,0 +1,6 @@
+{
+    "discord.detailsIdling": "Kleine pauze...",
+    "discord.detailsEditing": "{file_name} aan het aanpassen..",
+    "discord.lowerDetailsEditing": "Project: {workspace}",
+    "discord.removeRemoteRepository": true
+}
