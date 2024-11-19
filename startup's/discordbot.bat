@@ -9,11 +9,11 @@ IF EXIST "%targetDir%" (
     echo Successfully changed directory to %targetDir%
 
     REM Start the bot using pm2
-    pm2 start bot.py --name "bot"
+    pm2 start bot.py --name "discord-bot"
     IF ERRORLEVEL 1 (
         echo Error: Failed to start bot.py
         pause
         exit /b 1
     ) ELSE (
-        echo Successfully started bot.py as "bot"
+        echo Successfully started bot.py as "discord-bot"
     )
