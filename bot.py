@@ -45,13 +45,6 @@ async def on_ready():
                 except Exception as e:
                     logging.error("Fout bij het laden van %s.%s: %s", folder, filename[:-3], e)
     
-    # Laad de 'rps' extensie handmatig om foutmeldingen te controleren
-    try:
-        await bot.load_extension("games.rps")
-        logging.info("Succesvol geladen: games.rps")
-    except Exception as e:
-        logging.error("Fout bij het laden van games.rps: %s", e)
-
 # Commando's laden vanuit mappen zoals moderation, games, etc.
 @bot.command(name="bothelp")
 async def bothelp(ctx):

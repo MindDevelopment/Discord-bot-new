@@ -1,0 +1,45 @@
+2024-11-19 23:28:50,381 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-19 23:28:50,427 - INFO - logging in using static token
+2024-11-19 23:28:51,337 - INFO - Shard ID None has connected to Gateway (Session ID: ea657e6ea4ecce4eea0e36b221701890).
+2024-11-19 23:28:53,349 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-19 23:28:53,349 - INFO - Succesvol geladen: commands.ping
+2024-11-19 23:28:53,349 - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\discord\client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Discord-bot-new\bot.py", line 40, in on_ready
+    for filename in os.listdir(folder):
+                    ^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'moderation'
+2024-11-19 23:29:38,803 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-19 23:29:38,803 - INFO - logging in using static token
+2024-11-19 23:29:39,646 - INFO - Shard ID None has connected to Gateway (Session ID: e26388aaf6390e36cff128096a3a055d).
+2024-11-19 23:29:41,662 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-19 23:29:41,663 - INFO - Succesvol geladen: commands.ping
+2024-11-19 23:29:41,663 - ERROR - Fout bij het laden van games.rps: Extension 'games.rps' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-19 23:29:41,678 - INFO - Succesvol geladen: games.slot
+2024-11-19 23:29:41,678 - INFO - Succesvol geladen: economy.economy
+2024-11-19 23:29:41,678 - ERROR - Fout bij het laden van games.rps: Extension 'games.rps' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-19 23:32:39,817 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-19 23:32:39,824 - INFO - logging in using static token
+2024-11-19 23:32:40,630 - INFO - Shard ID None has connected to Gateway (Session ID: 30982c340ec643a1b8e6976b72ec4e37).
+2024-11-19 23:32:42,646 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-19 23:32:42,646 - INFO - Succesvol geladen: commands.ping
+2024-11-19 23:32:42,646 - ERROR - Fout bij het laden van games.rps: Extension 'games.rps' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-19 23:32:42,646 - INFO - Succesvol geladen: games.slot
+2024-11-19 23:32:42,646 - INFO - Succesvol geladen: economy.economy
+2024-11-19 23:32:42,662 - ERROR - Fout bij het laden van games.rps: Extension 'games.rps' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-19 23:33:43,493 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-19 23:33:43,506 - INFO - logging in using static token
+2024-11-19 23:33:44,275 - INFO - Shard ID None has connected to Gateway (Session ID: 98c8fa12b2c8171861fd2beaacd74161).
+2024-11-19 23:33:46,291 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-19 23:33:46,291 - INFO - Succesvol geladen: commands.ping
+2024-11-19 23:33:46,291 - INFO - Succesvol geladen: games.slot
+2024-11-19 23:33:46,291 - INFO - Succesvol geladen: economy.economy
+2024-11-19 23:34:35,879 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-19 23:34:35,879 - INFO - logging in using static token
+2024-11-19 23:34:36,723 - INFO - Shard ID None has connected to Gateway (Session ID: 7130d21d655fe7f8bd1f25fdfaaa48fb).
+2024-11-19 23:34:38,739 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-19 23:34:38,739 - INFO - Succesvol geladen: commands.ping
+2024-11-19 23:34:38,739 - INFO - Succesvol geladen: games.slot
+2024-11-19 23:34:38,739 - INFO - Succesvol geladen: economy.economy

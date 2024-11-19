@@ -1,19 +1,9 @@
-batch
 @echo off
-REM Change to the specified directory
-SET targetDir=C:\Users\Administrator\Discord-bot-new
+REM Start de Discord bot met PM2
+pm2 start "C:\Users\Administrator\Desktop\Discord-bot-new\bot.py" --name "discord-bot" --interpreter "python"
 
-REM Check if the directory exists
-IF EXIST "%targetDir%" (
-    cd /d "%targetDir%"
-    echo Successfully changed directory to %targetDir%
+REM Toon de status van alle processen
+pm2 status
 
-    REM Start the bot using pm2
-    pm2 start bot.py --name "discord-bot"
-    IF ERRORLEVEL 1 (
-        echo Error: Failed to start bot.py
-        pause
-        exit /b 1
-    ) ELSE (
-        echo Successfully started bot.py as "discord-bot"
-    )
+REM Laat het script draaien
+pause
