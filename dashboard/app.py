@@ -23,14 +23,19 @@ def pm2_stop():
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
+import os
+
 def get_console_output():
     """Lees de laatste 10 regels van het logbestand."""
     try:
-        with open("bot.log", "r") as log_file:
+        # Bepaal het pad naar bot.log
+        log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+        with open(log_path, "r") as log_file:
             lines = log_file.readlines()[-10:]  # Laatste 10 regels
         return "".join(lines)
     except Exception as e:
         return f"Error reading logs: {str(e)}"
+
 
 # Routes
 @app.route('/')
