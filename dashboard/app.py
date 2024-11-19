@@ -1,3 +1,4 @@
+# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 import subprocess
 import threading
@@ -23,21 +24,13 @@ def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
 def get_console_output():
-    """Haal de laatste 10 regels logs op van het PM2-proces."""
+    """Lees de laatste 10 regels van het logbestand."""
     try:
-        process = subprocess.Popen(
-            [PM2_PATH, 'logs', 'discord-bot', '--lines', '10'], 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE, 
-            text=True
-        )
-        output, _ = process.communicate(timeout=10)  # Timeout op 10 seconden
-        return output.strip() if output else "No logs available."
-    except subprocess.TimeoutExpired:
-        return "Error: Unable to retrieve logs within the timeout period."
+        with open("bot.log", "r") as log_file:
+            lines = log_file.readlines()[-10:]  # Laatste 10 regels
+        return "".join(lines)
     except Exception as e:
-        return f"Unexpected Error: {str(e)}"
-
+        return f"Error reading logs: {str(e)}"
 
 # Routes
 @app.route('/')

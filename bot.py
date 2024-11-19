@@ -1,7 +1,9 @@
+# Bot.py (main bot)
 import discord
 from discord.ext import commands
 import os
 import json
+import logging
 
 # Configuratie laden
 with open("config/config.json", "r") as config_file:
@@ -10,6 +12,14 @@ with open("config/config.json", "r") as config_file:
 TOKEN = config["token"]
 PREFIX = config["prefix"]
 ACTIVITY = config["activity"]
+
+# Logging instellen
+logging.basicConfig(
+    filename="bot.log",
+    filemode="a",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
 
 # Bot-intentie instellingen voor server- en berichtbeheer
 intents = discord.Intents.default()
@@ -21,6 +31,7 @@ bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 # Bot is gereed en online
 @bot.event
 async def on_ready():
+    logging.info("Bot is ingelogd als %s", bot.user)
     print(f"Bot is ingelogd als {bot.user}")
     await bot.change_presence(activity=discord.Game(name=ACTIVITY))
 
@@ -30,16 +41,16 @@ async def on_ready():
             if filename.endswith(".py"):
                 try:
                     await bot.load_extension(f"{folder}.{filename[:-3]}")
-                    print(f"Succesvol geladen: {folder}.{filename[:-3]}")
+                    logging.info("Succesvol geladen: %s.%s", folder, filename[:-3])
                 except Exception as e:
-                    print(f"Fout bij het laden van {folder}.{filename[:-3]}: {e}")
+                    logging.error("Fout bij het laden van %s.%s: %s", folder, filename[:-3], e)
     
     # Laad de 'rps' extensie handmatig om foutmeldingen te controleren
     try:
         await bot.load_extension("games.rps")
-        print("Succesvol geladen: games.rps")
+        logging.info("Succesvol geladen: games.rps")
     except Exception as e:
-        print(f"Fout bij het laden van games.rps: {e}")
+        logging.error("Fout bij het laden van games.rps: %s", e)
 
 # Commando's laden vanuit mappen zoals moderation, games, etc.
 @bot.command(name="bothelp")
