@@ -26,7 +26,7 @@ def pm2_restart():
 def get_console_output():
     """Lees de laatste 10 regels van het logbestand."""
     try:
-        with open("C:\Users\Administrator\Discord-bot-new\bot.log", "r") as log_file:
+        with open("bot.log", "r") as log_file:
             lines = log_file.readlines()[-10:]  # Laatste 10 regels
         return "".join(lines)
     except Exception as e:
