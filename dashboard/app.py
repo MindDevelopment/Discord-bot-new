@@ -1,11 +1,8 @@
-# app.py (dashboard met live console-updates..)
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_socketio import SocketIO, emit
 import subprocess
 import threading
-import os
 import json
-import time
+from waitress import serve  # Import Waitress
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -13,31 +10,8 @@ app.secret_key = 'your_secret_key'
 # Gebruikersinformatie
 users = {'Daan': 'Daan123'}
 
-# Socket.IO instellen
-socketio = SocketIO(app)
-
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
-
-# Console-output streamen naar clients
-def stream_console_logs():
-    log_path = os.path.join(os.path.dirname(__file__), "..", "bot.log")
-    if not os.path.exists(log_path):
-        return
-
-    with open(log_path, "r") as log_file:
-        # Lees de log vanaf het einde
-        log_file.seek(0, os.SEEK_END)
-        while True:
-            line = log_file.readline()
-            if line:
-                socketio.emit('console_output', {'data': line})
-            time.sleep(1)  # Beperk CPU-gebruik
-
-# Start de console-logstream in een aparte thread
-@socketio.on('connect')
-def handle_connect():
-    threading.Thread(target=stream_console_logs, daemon=True).start()
 
 # PM2 commando's
 def pm2_start():
@@ -48,6 +22,19 @@ def pm2_stop():
 
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
+
+import os
+
+def get_console_output():
+    """Lees de laatste 10 regels van het logbestand."""
+    try:
+        # Bepaal het pad naar bot.log
+        log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+        with open(log_path, "r") as log_file:
+            lines = log_file.readlines()[-10:]  # Laatste 10 regels
+        return "".join(lines)
+    except Exception as e:
+        return f"Error reading logs: {str(e)}"
 
 # Routes
 @app.route('/')
@@ -71,7 +58,9 @@ def login():
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return render_template('dashboard.html', user=session['username'])
+
+    console_output = get_console_output()
+    return render_template('dashboard.html', user=session['username'], console_output=console_output)
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
@@ -103,4 +92,5 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    # Start de app met Waitress
+    serve(app, host='0.0.0.0', port=5000)
