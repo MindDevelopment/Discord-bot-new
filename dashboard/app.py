@@ -1,11 +1,16 @@
+# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_socketio import SocketIO, emit
 import subprocess
 import threading
 import json
-from waitress import serve  # Import Waitress
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+# Configureren van SocketIO
+socketio = SocketIO(app)
 
 # Gebruikersinformatie
 users = {'Daan': 'Daan123'}
@@ -23,44 +28,21 @@ def pm2_stop():
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
-import os
+import time
 
-def get_console_output():
-    """Lees de laatste 10 regels van het logbestand."""
+def stream_console():
+    """Stream de console output naar de webclient."""
+    log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
     try:
-        # Bepaal het pad naar bot.log
-        log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
         with open(log_path, "r") as log_file:
-            lines = log_file.readlines()[-10:]  # Laatste 10 regels
-        return "".join(lines)
+            while True:
+                # Lees nieuwe regels toe aan het bestand
+                new_line = log_file.readline()
+                if new_line:
+                    socketio.emit('console_update', new_line)  # Stuur elke nieuwe regel naar de client
+                time.sleep(1)  # 1 seconde pauze tussen updates
     except Exception as e:
-        return f"Error reading logs: {str(e)}"
-
-# Routes
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        if username in users and users[username] == password:
-            session['username'] = username
-            return redirect(url_for('dashboard'))
-        else:
-            return render_template('login.html', error="Invalid username or password.")
-    return render_template('login.html')
-
-@app.route('/dashboard')
-def dashboard():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    console_output = get_console_output()
-    return render_template('dashboard.html', user=session['username'], console_output=console_output)
+        print(f"Error reading log: {e}")
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
@@ -86,11 +68,33 @@ def restart_bot():
     except Exception as e:
         return f"Error restarting bot: {e}"
 
+@app.route('/dashboard')
+def dashboard():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html', user=session['username'])
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username in users and users[username] == password:
+            session['username'] = username
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html', error="Invalid username or password.")
+    return render_template('login.html')
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    # Start de app met Waitress
-    serve(app, host='0.0.0.0', port=5000)
+    # Start de console streaming in een aparte thread
+    threading.Thread(target=stream_console, daemon=True).start()
+    
+    # Start de server met SocketIO
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
