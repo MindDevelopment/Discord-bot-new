@@ -19,12 +19,21 @@ def pm2_start():
 
 def pm2_stop():
     """Stop de bot met PM2"""
-    # Controleer of de bot draait via PM2
-    result = subprocess.run([PM2_PATH, 'list'], capture_output=True, text=True)
-    if 'discord-bot' in result.stdout:
-        subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
-    else:
-        raise Exception("Bot is not running.")
+    try:
+        # Controleer of de bot draait via PM2
+        result = subprocess.run([PM2_PATH, 'list'], capture_output=True, text=True, check=True)
+        
+        # Als de uitvoer geen tekst bevat, returnen we een lege string
+        if result.stdout is None:
+            raise Exception("PM2 list returned no output.")
+        
+        # Controleer of 'discord-bot' in de lijst staat
+        if 'discord-bot' in result.stdout:
+            subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
+        else:
+            raise Exception("Bot is not running.")
+    except Exception as e:
+        raise Exception(f"Error stopping bot: {str(e)}")
 
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
