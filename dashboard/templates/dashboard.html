@@ -32,8 +32,25 @@
     <div class="container mt-5">
         <h2 class="mb-4">Welcome, {{ user }}</h2>
 
+        <!-- Bot Informatie -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                Bot Informatie
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Bot Versie:</strong> {{ bot_version }}</li>
+                    <li><strong>CPU Gebruik:</strong> {{ cpu_usage }}%</li>
+                    <li><strong>Geheugen Gebruik:</strong> {{ memory_usage }}%</li>
+                    <li><strong>Uptime:</strong> {{ uptime }}</li>
+                    <li><strong>Platform:</strong> {{ platform }}</li>
+                    <li><strong>Bot draait op:</strong> {{ bot_machine }}</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Console Output -->
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header bg-primary text-white">
                 Console Output
             </div>

@@ -1,9 +1,10 @@
-# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
 import os
+import psutil
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -28,8 +29,6 @@ def pm2_stop():
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
 
-import time
-
 def stream_console():
     """Stream de console output naar de webclient."""
     log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
@@ -43,6 +42,37 @@ def stream_console():
                 time.sleep(1)  # 1 seconde pauze tussen updates
     except Exception as e:
         print(f"Error reading log: {e}")
+
+def get_system_info():
+    """Haal systeeminformatie op, zoals CPU, geheugen en uptime."""
+    # CPU gebruik
+    cpu_usage = psutil.cpu_percent(interval=1)
+    
+    # Geheugen gebruik
+    memory_info = psutil.virtual_memory()
+    memory_usage = memory_info.percent
+    
+    # Uptime (in seconden)
+    uptime_seconds = time.time() - psutil.boot_time()
+    uptime = str(time.strftime('%H:%M:%S', time.gmtime(uptime_seconds)))
+    
+    # Platforminformatie
+    platform = os.name  # 'posix' voor Linux/Mac, 'nt' voor Windows
+    
+    # Machine informatie (bijv. systeem)
+    bot_machine = os.uname().nodename if hasattr(os, 'uname') else 'N/A'
+    
+    # Bot versie (bijvoorbeeld een statische versie of via een andere manier ophalen)
+    bot_version = "1.0.0"  # Hier kun je de werkelijke versie instellen
+
+    return {
+        'cpu_usage': cpu_usage,
+        'memory_usage': memory_usage,
+        'uptime': uptime,
+        'platform': platform,
+        'bot_machine': bot_machine,
+        'bot_version': bot_version
+    }
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
@@ -68,15 +98,13 @@ def restart_bot():
     except Exception as e:
         return f"Error restarting bot: {e}"
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return render_template('dashboard.html', user=session['username'])
+    
+    system_info = get_system_info()  # Haal de systeeminformatie op
+    return render_template('dashboard.html', user=session['username'], **system_info)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

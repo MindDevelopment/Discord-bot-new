@@ -55,5 +55,8 @@ async def bothelp(ctx):
 from economy.economy import Economy
 bot.load_extension("economy.economy")
 
+from information.informatie import Info  # Zorg ervoor dat het pad klopt
+bot.load_extension("information.informatie")
+
 # Bot starten
 bot.run(TOKEN)
