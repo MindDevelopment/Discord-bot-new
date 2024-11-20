@@ -68,6 +68,10 @@ def restart_bot():
     except Exception as e:
         return f"Error restarting bot: {e}"
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
