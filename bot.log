@@ -199,3 +199,31 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 02:31:59,883 - INFO - Succesvol geladen: commands.ping
 2024-11-20 02:31:59,885 - INFO - Succesvol geladen: games.slot
 2024-11-20 02:31:59,887 - INFO - Succesvol geladen: economy.economy
+2024-11-20 02:34:24,812 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 02:34:24,818 - INFO - logging in using static token
+2024-11-20 02:34:25,665 - INFO - Shard ID None has connected to Gateway (Session ID: 95863cfeed007ddd474d45e53b6dd559).
+2024-11-20 02:34:27,676 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 02:34:27,680 - INFO - Succesvol geladen: commands.ping
+2024-11-20 02:34:27,683 - INFO - Succesvol geladen: games.slot
+2024-11-20 02:34:27,687 - INFO - Succesvol geladen: economy.economy
+2024-11-20 02:34:37,669 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 02:34:37,676 - INFO - logging in using static token
+2024-11-20 02:34:38,481 - INFO - Shard ID None has connected to Gateway (Session ID: ae367f903880274b6bd5ffa999ab6a44).
+2024-11-20 02:34:40,494 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 02:34:40,499 - INFO - Succesvol geladen: commands.ping
+2024-11-20 02:34:40,501 - INFO - Succesvol geladen: games.slot
+2024-11-20 02:34:40,503 - INFO - Succesvol geladen: economy.economy
+2024-11-20 02:34:55,447 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 02:34:55,453 - INFO - logging in using static token
+2024-11-20 02:34:56,241 - INFO - Shard ID None has connected to Gateway (Session ID: f00f91df907d542326757d7d3da1b95b).
+2024-11-20 02:34:58,253 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 02:34:58,256 - INFO - Succesvol geladen: commands.ping
+2024-11-20 02:34:58,258 - INFO - Succesvol geladen: games.slot
+2024-11-20 02:34:58,260 - INFO - Succesvol geladen: economy.economy
+2024-11-20 02:38:20,459 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 02:38:20,467 - INFO - logging in using static token
+2024-11-20 02:38:21,476 - INFO - Shard ID None has connected to Gateway (Session ID: ec8cd71da0b3fd93403daa699272a32b).
+2024-11-20 02:38:23,492 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 02:38:23,495 - INFO - Succesvol geladen: commands.ping
+2024-11-20 02:38:23,500 - INFO - Succesvol geladen: games.slot
+2024-11-20 02:38:23,501 - INFO - Succesvol geladen: economy.economy

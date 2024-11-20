@@ -3,3 +3,4 @@ config/config.json
 bot.log
 bot.log
 *.log
+bot.log
