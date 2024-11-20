@@ -19,25 +19,11 @@ intents.message_content = True  # Nodig voor berichtinhoud
 # Bot prefix instellen en initialiseren
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-# Logging instellen (logt naar de console en naar SocketIO)
+# Logging instellen (logt naar de console)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
-
-# Maak een SocketIOHandler aan voor logging
-from app import socketio
-class SocketIOHandler(logging.Handler):
-    def emit(self, record):
-        log_message = self.format(record)
-        socketio.emit('console_update', log_message)  # Zend log naar de frontend
-
-# Voeg de SocketIOHandler toe aan de rootlogger
-socketio_handler = SocketIOHandler()
-socketio_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-socketio_handler.setFormatter(formatter)
-logging.getLogger().addHandler(socketio_handler)
 
 # Bot is gereed en online
 @bot.event

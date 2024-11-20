@@ -1,4 +1,4 @@
-import logging
+# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 import subprocess
@@ -19,6 +19,7 @@ PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit
 
 # PM2 commando's
 def pm2_start():
+    # Specificeer de naam van de applicatie expliciet
     subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot'], check=True)
 
 def pm2_stop():
@@ -31,44 +32,40 @@ import time
 
 def stream_console():
     """Stream de console output naar de webclient."""
-    while True:
-        time.sleep(1)  # Pauze om CPU te sparen
-        socketio.emit('console_update', 'Bot draait...')  # Dummy log data, kan worden aangepast om echte logs door te geven
-
-# Custom log handler die logs naar SocketIO stuurt
-class SocketIOHandler(logging.Handler):
-    def emit(self, record):
-        log_message = self.format(record)
-        socketio.emit('console_update', log_message)  # Zend log naar de frontend
+    log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+    try:
+        with open(log_path, "r") as log_file:
+            while True:
+                # Lees nieuwe regels toe aan het bestand
+                new_line = log_file.readline()
+                if new_line:
+                    socketio.emit('console_update', new_line)  # Stuur elke nieuwe regel naar de client
+                time.sleep(1)  # 1 seconde pauze tussen updates
+    except Exception as e:
+        print(f"Error reading log: {e}")
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
     try:
         pm2_start()
-        logging.info("Bot gestart")
         return redirect(url_for('dashboard'))
     except Exception as e:
-        logging.error(f"Error starting bot: {e}")
         return f"Error starting bot: {e}"
 
 @app.route('/stop_bot', methods=['POST'])
 def stop_bot():
     try:
         pm2_stop()
-        logging.info("Bot gestopt")
         return redirect(url_for('dashboard'))
     except Exception as e:
-        logging.error(f"Error stopping bot: {e}")
         return f"Error stopping bot: {e}"
 
 @app.route('/restart_bot', methods=['POST'])
 def restart_bot():
     try:
         pm2_restart()
-        logging.info("Bot herstart")
         return redirect(url_for('dashboard'))
     except Exception as e:
-        logging.error(f"Error restarting bot: {e}")
         return f"Error restarting bot: {e}"
 
 @app.route('/')
@@ -99,20 +96,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-# Zorg ervoor dat de SocketIO verbinding correct werkt
-@socketio.on('connect')
-def handle_connect():
-    print("Client connected")
-    socketio.emit('console_update', 'Connected to server')  # Verzend een bericht naar de frontend bij connectie
-
 if __name__ == '__main__':
-    # Logging configureren om naar SocketIO te sturen
-    socketio_handler = SocketIOHandler()
-    socketio_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    socketio_handler.setFormatter(formatter)
-    logging.getLogger().addHandler(socketio_handler)
-    
     # Start de console streaming in een aparte thread
     threading.Thread(target=stream_console, daemon=True).start()
     
