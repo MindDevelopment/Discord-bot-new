@@ -1,10 +1,9 @@
-# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
+import json
 import os
-import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -17,44 +16,17 @@ users = {'Daan': 'Daan123'}
 
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
-BOT_PATH = "C:\\Users\\Administrator\\Desktop\\Discord-bot-new\\bot.py"  # Volledig pad naar bot.py
 
 # PM2 commando's
 def pm2_start():
-    """Start de bot met PM2."""
-    try:
-        result = subprocess.run([PM2_PATH, 'start', BOT_PATH], check=True, capture_output=True, text=True)
-        print(result.stdout)  # Print stdout
-        print(result.stderr)  # Print stderr
-    except subprocess.CalledProcessError as e:
-        print(f"Error starting bot: {e}")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
-        raise
+    # Zorg ervoor dat de bot altijd de naam 'discord-bot' krijgt
+    subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot', '--interpreter', 'python'], check=True)
 
 def pm2_stop():
-    """Stop de bot met PM2."""
-    try:
-        result = subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True, capture_output=True, text=True)
-        print(result.stdout)
-        print(result.stderr)
-    except subprocess.CalledProcessError as e:
-        print(f"Error stopping bot: {e}")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
-        raise
+    subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
 
 def pm2_restart():
-    """Herstart de bot met PM2."""
-    try:
-        result = subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True, capture_output=True, text=True)
-        print(result.stdout)
-        print(result.stderr)
-    except subprocess.CalledProcessError as e:
-        print(f"Error restarting bot: {e}")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
-        raise
+    subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
 
 import time
 
