@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
-import json
 import os
 import time
 
@@ -18,22 +17,49 @@ users = {'Daan': 'Daan123'}
 
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
+BOT_PATH = "C:\\Users\\Administrator\\Desktop\\Discord-bot-new\\bot.py"  # Volledig pad naar bot.py
 
 # PM2 commando's
 def pm2_start():
     """Start de bot met PM2."""
-    subprocess.run([PM2_PATH, 'start', 'bot.py'], check=True)
+    try:
+        result = subprocess.run([PM2_PATH, 'start', BOT_PATH], check=True, capture_output=True, text=True)
+        print(result.stdout)  # Print stdout
+        print(result.stderr)  # Print stderr
+    except subprocess.CalledProcessError as e:
+        print(f"Error starting bot: {e}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        raise
 
 def pm2_stop():
     """Stop de bot met PM2."""
-    subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
+    try:
+        result = subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True, capture_output=True, text=True)
+        print(result.stdout)
+        print(result.stderr)
+    except subprocess.CalledProcessError as e:
+        print(f"Error stopping bot: {e}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        raise
 
 def pm2_restart():
     """Herstart de bot met PM2."""
-    subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
+    try:
+        result = subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True, capture_output=True, text=True)
+        print(result.stdout)
+        print(result.stderr)
+    except subprocess.CalledProcessError as e:
+        print(f"Error restarting bot: {e}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        raise
+
+import time
 
 def stream_console():
-    """Stream de console output naar de webclient via SocketIO."""
+    """Stream de console output naar de webclient."""
     log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
     try:
         with open(log_path, "r") as log_file:
