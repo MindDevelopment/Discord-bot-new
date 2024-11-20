@@ -1,3 +1,4 @@
+# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 import subprocess
 import threading
@@ -13,27 +14,15 @@ users = {'Daan': 'Daan123'}
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
 
+# Absoluut pad naar bot.py
+FULL_BOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../bot.py"))
+
 # PM2 commando's
 def pm2_start():
-    subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot', '--interpreter', 'python'], check=True)
+    subprocess.run([PM2_PATH, 'start', FULL_BOT_PATH, '--name', 'discord-bot'], check=True)
 
 def pm2_stop():
-    """Stop de bot met PM2"""
-    try:
-        # Controleer of de bot draait via PM2
-        result = subprocess.run([PM2_PATH, 'list'], capture_output=True, text=True, check=True)
-        
-        # Als de uitvoer geen tekst bevat, geven we de foutmelding van result
-        if not result.stdout:
-            raise Exception(f"PM2 list returned no output. Error: {result.stderr}")
-        
-        # Controleer of 'discord-bot' in de lijst staat
-        if 'discord-bot' in result.stdout:
-            subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
-        else:
-            raise Exception("Bot is not running.")
-    except Exception as e:
-        raise Exception(f"Error stopping bot: {str(e)}")
+    subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
 
 def pm2_restart():
     subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
@@ -42,7 +31,7 @@ def get_console_output():
     """Lees de laatste 10 regels van het logbestand."""
     try:
         # Bepaal het pad naar bot.log
-        log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+        log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../bot.log"))
         with open(log_path, "r") as log_file:
             lines = log_file.readlines()[-10:]  # Laatste 10 regels
         return "".join(lines)
