@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
     <title>Dashboard</title>
 </head>
 <body>
@@ -28,15 +30,19 @@
         </div>
     </nav>
 
+    <!-- Dark Mode Switch -->
+    <div class="theme-switch-wrapper fixed-top">
+        <div class="theme-switch">
+            <input type="checkbox" id="theme-switch">
+            <label for="theme-switch" class="theme-switch-label"></label>
+        </div>
+    </div>
+
     <!-- Dashboard Content -->
     <div class="container mt-5">
         <h2 class="mb-4">Welcome, {{ user }}</h2>
-
-        <!-- Bot Informatie -->
         <div class="card mt-4">
-            <div class="card-header bg-info text-white">
-                Bot Informatie
-            </div>
+            <div class="card-header bg-info text-white">Bot Informatie</div>
             <div class="card-body">
                 <ul>
                     <li><strong>Bot Versie:</strong> {{ bot_version }}</li>
@@ -48,18 +54,12 @@
                 </ul>
             </div>
         </div>
-
-        <!-- Console Output -->
         <div class="card mt-4">
-            <div class="card-header bg-primary text-white">
-                Console Output
-            </div>
+            <div class="card-header bg-primary text-white">Console Output</div>
             <div class="card-body">
-                <textarea id="console-output" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 300px; width: 100%; overflow-y: auto;" readonly></textarea>
+                <textarea id="console-output" class="form-control" readonly></textarea>
             </div>
         </div>
-
-        <!-- Control Buttons -->
         <div class="d-flex justify-content-center mt-4">
             <form method="POST" action="/start_bot">
                 <button type="submit" class="btn btn-success mx-2"><i class="fas fa-play"></i> Start Bot</button>
@@ -76,14 +76,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
     <script>
-        // Maak verbinding met de SocketIO-server
         var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-        // Luister naar nieuwe logoutput
         socket.on('console_update', function(data) {
             var consoleOutput = document.getElementById('console-output');
-            consoleOutput.value += data;  // Voeg nieuwe logregel toe
-            consoleOutput.scrollTop = consoleOutput.scrollHeight; // Scroll naar beneden
+            consoleOutput.value += data;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
     </script>
 </body>
