@@ -5,6 +5,7 @@ import subprocess
 import threading
 import json
 import os
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -20,18 +21,19 @@ PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit
 
 # PM2 commando's
 def pm2_start():
+    """Start de bot met PM2."""
     subprocess.run([PM2_PATH, 'start', 'bot.py'], check=True)
 
 def pm2_stop():
+    """Stop de bot met PM2."""
     subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
 
 def pm2_restart():
+    """Herstart de bot met PM2."""
     subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
-import time
-
 def stream_console():
-    """Stream de console output naar de webclient."""
+    """Stream de console output naar de webclient via SocketIO."""
     log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
     try:
         with open(log_path, "r") as log_file:
