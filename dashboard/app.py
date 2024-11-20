@@ -23,9 +23,9 @@ def pm2_stop():
         # Controleer of de bot draait via PM2
         result = subprocess.run([PM2_PATH, 'list'], capture_output=True, text=True, check=True)
         
-        # Als de uitvoer geen tekst bevat, returnen we een lege string
-        if result.stdout is None:
-            raise Exception("PM2 list returned no output.")
+        # Als de uitvoer geen tekst bevat, geven we de foutmelding van result
+        if not result.stdout:
+            raise Exception(f"PM2 list returned no output. Error: {result.stderr}")
         
         # Controleer of 'discord-bot' in de lijst staat
         if 'discord-bot' in result.stdout:
