@@ -71,3 +71,24 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 00:15:38,068 - INFO - Succesvol geladen: commands.ping
 2024-11-20 00:15:38,068 - INFO - Succesvol geladen: games.slot
 2024-11-20 00:15:38,068 - INFO - Succesvol geladen: economy.economy
+2024-11-20 01:19:54,096 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 01:19:54,103 - INFO - logging in using static token
+2024-11-20 01:19:54,856 - INFO - Shard ID None has connected to Gateway (Session ID: 5973279d23148cf6c1a52cef11f74b8f).
+2024-11-20 01:19:56,869 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 01:19:56,872 - INFO - Succesvol geladen: commands.ping
+2024-11-20 01:19:56,875 - INFO - Succesvol geladen: games.slot
+2024-11-20 01:19:56,876 - INFO - Succesvol geladen: economy.economy
+2024-11-20 01:20:13,224 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 01:20:13,232 - INFO - logging in using static token
+2024-11-20 01:20:14,037 - INFO - Shard ID None has connected to Gateway (Session ID: 5d519cedb9f1b362d504cf774f1e53c1).
+2024-11-20 01:20:16,064 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 01:20:16,068 - INFO - Succesvol geladen: commands.ping
+2024-11-20 01:20:16,070 - INFO - Succesvol geladen: games.slot
+2024-11-20 01:20:16,072 - INFO - Succesvol geladen: economy.economy
+2024-11-20 01:24:55,739 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 01:24:55,746 - INFO - logging in using static token
+2024-11-20 01:24:56,582 - INFO - Shard ID None has connected to Gateway (Session ID: 9a84af8a2d8e2be691b8359ef1595515).
+2024-11-20 01:24:58,603 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 01:24:58,606 - INFO - Succesvol geladen: commands.ping
+2024-11-20 01:24:58,609 - INFO - Succesvol geladen: games.slot
+2024-11-20 01:24:58,611 - INFO - Succesvol geladen: economy.economy
