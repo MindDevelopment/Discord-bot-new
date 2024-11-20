@@ -92,3 +92,10 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 01:24:58,606 - INFO - Succesvol geladen: commands.ping
 2024-11-20 01:24:58,609 - INFO - Succesvol geladen: games.slot
 2024-11-20 01:24:58,611 - INFO - Succesvol geladen: economy.economy
+2024-11-20 01:28:52,255 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2024-11-20 01:28:52,263 - INFO - logging in using static token
+2024-11-20 01:28:53,124 - INFO - Shard ID None has connected to Gateway (Session ID: 1016004fabf161222e00c9eb579e5f2c).
+2024-11-20 01:28:55,136 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-20 01:28:55,140 - INFO - Succesvol geladen: commands.ping
+2024-11-20 01:28:55,143 - INFO - Succesvol geladen: games.slot
+2024-11-20 01:28:55,145 - INFO - Succesvol geladen: economy.economy
