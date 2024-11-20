@@ -1,51 +1,53 @@
+# app.py (dashboard met live console-updates)
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 import subprocess
 import threading
-import time
 import os
+import json
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Gebruikersinformatie
 users = {'Daan': 'Daan123'}
 
+# Socket.IO instellen
+socketio = SocketIO(app)
+
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
 
-# PM2 commando's
-def pm2_command(action):
-    result = subprocess.run(
-        [PM2_PATH, action, 'bot.py'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
-    if result.returncode != 0:
-        raise Exception(result.stderr)
-    return result.stdout
-
-# Real-time console logging
+# Console-output streamen naar clients
 def stream_console_logs():
     log_path = os.path.join(os.path.dirname(__file__), "..", "bot.log")
     if not os.path.exists(log_path):
-        print("Logbestand bestaat niet.")
         return
 
     with open(log_path, "r") as log_file:
-        log_file.seek(0, os.SEEK_END)  # Begin bij het einde van het bestand
+        # Lees de log vanaf het einde
+        log_file.seek(0, os.SEEK_END)
         while True:
             line = log_file.readline()
             if line:
-                print(f"Stuur log: {line.strip()}")  # Debug
-                socketio.emit('console_output', {'data': line.strip()})
-            time.sleep(1)
+                socketio.emit('console_output', {'data': line})
+            time.sleep(1)  # Beperk CPU-gebruik
 
-# Start de console-logging thread
-console_thread = threading.Thread(target=stream_console_logs, daemon=True)
-console_thread.start()
+# Start de console-logstream in een aparte thread
+@socketio.on('connect')
+def handle_connect():
+    threading.Thread(target=stream_console_logs, daemon=True).start()
+
+# PM2 commando's
+def pm2_start():
+    subprocess.run([PM2_PATH, 'start', 'bot.py'], check=True)
+
+def pm2_stop():
+    subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
+
+def pm2_restart():
+    subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
 # Routes
 @app.route('/')
@@ -74,7 +76,7 @@ def dashboard():
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
     try:
-        pm2_command('start')
+        pm2_start()
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error starting bot: {e}"
@@ -82,7 +84,7 @@ def start_bot():
 @app.route('/stop_bot', methods=['POST'])
 def stop_bot():
     try:
-        pm2_command('stop')
+        pm2_stop()
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error stopping bot: {e}"
@@ -90,7 +92,7 @@ def stop_bot():
 @app.route('/restart_bot', methods=['POST'])
 def restart_bot():
     try:
-        pm2_command('restart')
+        pm2_restart()
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error restarting bot: {e}"
@@ -101,4 +103,4 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
