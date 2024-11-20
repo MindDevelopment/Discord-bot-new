@@ -1,0 +1,67 @@
+/* Standaard light mode */
+body {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Navbar voor light mode */
+.navbar {
+    background-color: #f8f9fa;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Navbar voor dark mode */
+.navbar.dark-mode {
+    background-color: #333333;
+}
+
+/* Schakelaar styling */
+.theme-switch-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.theme-switch {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.theme-switch-label {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+}
+
+.theme-switch-label:before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    top: 2px;
+    left: 2px;
+}
+
+.theme-switch input:checked + .theme-switch-label {
+    background-color: #4caf50;
+}
+
+.theme-switch input:checked + .theme-switch-label:before {
+    transform: translateX(20px);
+}
