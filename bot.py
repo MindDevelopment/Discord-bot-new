@@ -1,4 +1,3 @@
-# Bot.py (main bot)
 import discord
 from discord.ext import commands
 import os
@@ -15,9 +14,9 @@ ACTIVITY = config["activity"]
 
 # Logging instellen
 logging.basicConfig(
-    filename="bot.log",
-    filemode="a",
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    filename="bot.log", 
+    filemode="a", 
+    format="%(asctime)s - %(levelname)s - %(message)s", 
     level=logging.INFO
 )
 
@@ -28,7 +27,19 @@ intents.message_content = True  # Nodig voor berichtinhoud
 # Bot prefix instellen en initialiseren
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-# Bot is gereed en online
+# Log elke gebeurtenis (gebruikerscommando's)
+@bot.event
+async def on_command(ctx):
+    logging.info(f"Commando uitgevoerd: {ctx.command} door {ctx.author} in {ctx.guild.name}")
+    print(f"Commando uitgevoerd: {ctx.command} door {ctx.author} in {ctx.guild.name}")
+
+# Log elke fout die optreedt tijdens de uitvoering van een commando
+@bot.event
+async def on_command_error(ctx, error):
+    logging.error(f"Fout bij het uitvoeren van commando {ctx.command}: {error}")
+    print(f"Fout bij het uitvoeren van commando {ctx.command}: {error}")
+
+# Log wanneer de bot succesvol inlogt
 @bot.event
 async def on_ready():
     logging.info("Bot is ingelogd als %s", bot.user)
@@ -44,7 +55,7 @@ async def on_ready():
                     logging.info("Succesvol geladen: %s.%s", folder, filename[:-3])
                 except Exception as e:
                     logging.error("Fout bij het laden van %s.%s: %s", folder, filename[:-3], e)
-    
+
 # Commando's laden vanuit mappen zoals moderation, games, etc.
 @bot.command(name="bothelp")
 async def bothelp(ctx):
@@ -54,6 +65,7 @@ async def bothelp(ctx):
     - !bothelp: Toon dit help-bericht
     """
     await ctx.send(help_text)
+    logging.info("Help commando uitgevoerd door %s in %s", ctx.author, ctx.guild.name)
 
 # Voeg de economy extensie toe
 from economy.economy import Economy

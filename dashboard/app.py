@@ -1,9 +1,11 @@
+# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
 import json
 import os
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -19,16 +21,13 @@ PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit
 
 # PM2 commando's
 def pm2_start():
-    # Zorg ervoor dat de bot altijd de naam 'discord-bot' krijgt
-    subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot', '--interpreter', 'python'], check=True)
+    subprocess.run([PM2_PATH, 'start', 'bot.py'], check=True)
 
 def pm2_stop():
-    subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
+    subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
 
 def pm2_restart():
-    subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
-
-import time
+    subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
 
 def stream_console():
     """Stream de console output naar de webclient."""
@@ -67,6 +66,10 @@ def restart_bot():
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error restarting bot: {e}"
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/dashboard')
 def dashboard():
