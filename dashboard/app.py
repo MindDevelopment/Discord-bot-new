@@ -1,12 +1,13 @@
-# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_socketio import SocketIO
 import subprocess
 import threading
-import json
+import time
 import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Gebruikersinformatie
 users = {'Daan': 'Daan123'}
@@ -14,29 +15,37 @@ users = {'Daan': 'Daan123'}
 # PM2 pad configuratie
 PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
 
-# Absoluut pad naar bot.py
-FULL_BOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../bot.py"))
-
 # PM2 commando's
-def pm2_start():
-    subprocess.run([PM2_PATH, 'start', FULL_BOT_PATH, '--name', 'discord-bot'], check=True)
+def pm2_command(action):
+    result = subprocess.run(
+        [PM2_PATH, action, 'bot.py'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    if result.returncode != 0:
+        raise Exception(result.stderr)
+    return result.stdout
 
-def pm2_stop():
-    subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
+# Real-time console logging
+def stream_console_logs():
+    log_path = os.path.join(os.path.dirname(__file__), "..", "bot.log")
+    if not os.path.exists(log_path):
+        print("Logbestand bestaat niet.")
+        return
 
-def pm2_restart():
-    subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
+    with open(log_path, "r") as log_file:
+        log_file.seek(0, os.SEEK_END)  # Begin bij het einde van het bestand
+        while True:
+            line = log_file.readline()
+            if line:
+                print(f"Stuur log: {line.strip()}")  # Debug
+                socketio.emit('console_output', {'data': line.strip()})
+            time.sleep(1)
 
-def get_console_output():
-    """Lees de laatste 10 regels van het logbestand."""
-    try:
-        # Bepaal het pad naar bot.log
-        log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../bot.log"))
-        with open(log_path, "r") as log_file:
-            lines = log_file.readlines()[-10:]  # Laatste 10 regels
-        return "".join(lines)
-    except Exception as e:
-        return f"Error reading logs: {str(e)}"
+# Start de console-logging thread
+console_thread = threading.Thread(target=stream_console_logs, daemon=True)
+console_thread.start()
 
 # Routes
 @app.route('/')
@@ -60,14 +69,12 @@ def login():
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-
-    console_output = get_console_output()
-    return render_template('dashboard.html', user=session['username'], console_output=console_output)
+    return render_template('dashboard.html', user=session['username'])
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
     try:
-        pm2_start()
+        pm2_command('start')
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error starting bot: {e}"
@@ -75,7 +82,7 @@ def start_bot():
 @app.route('/stop_bot', methods=['POST'])
 def stop_bot():
     try:
-        pm2_stop()
+        pm2_command('stop')
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error stopping bot: {e}"
@@ -83,7 +90,7 @@ def stop_bot():
 @app.route('/restart_bot', methods=['POST'])
 def restart_bot():
     try:
-        pm2_restart()
+        pm2_command('restart')
         return redirect(url_for('dashboard'))
     except Exception as e:
         return f"Error restarting bot: {e}"
@@ -94,4 +101,4 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)
