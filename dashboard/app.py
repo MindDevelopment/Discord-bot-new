@@ -1,8 +1,8 @@
-# app.py (dashboard)
 from flask import Flask, render_template, request, redirect, url_for, session
 import subprocess
 import threading
 import json
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -15,15 +15,19 @@ PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit
 
 # PM2 commando's
 def pm2_start():
-    subprocess.run([PM2_PATH, 'start', 'bot.py'], check=True)
+    subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot', '--interpreter', 'python'], check=True)
 
 def pm2_stop():
-    subprocess.run([PM2_PATH, 'stop', 'bot.py'], check=True)
+    """Stop de bot met PM2"""
+    # Controleer of de bot draait via PM2
+    result = subprocess.run([PM2_PATH, 'list'], capture_output=True, text=True)
+    if 'discord-bot' in result.stdout:
+        subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
+    else:
+        raise Exception("Bot is not running.")
 
 def pm2_restart():
-    subprocess.run([PM2_PATH, 'restart', 'bot.py'], check=True)
-
-import os
+    subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
 
 def get_console_output():
     """Lees de laatste 10 regels van het logbestand."""
@@ -35,7 +39,6 @@ def get_console_output():
         return "".join(lines)
     except Exception as e:
         return f"Error reading logs: {str(e)}"
-
 
 # Routes
 @app.route('/')
