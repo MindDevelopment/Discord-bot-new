@@ -51,21 +51,19 @@
                 <button type="submit" class="btn btn-danger mx-2"><i class="fas fa-stop"></i> Stop Bot</button>
             </form>
             <form method="POST" action="/restart_bot">
-                <button type="submit" class="btn btn-warning mx-2"><i class="fas fa-redo"></i> Restart Bot</button>
+                <button type="submit" class="btn btn-warning mx-2"><i class="fas fa-undo"></i> Restart Bot</button>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@socket.io/client/dist/socket.io.min.js"></script>
     <script>
-        // Maak verbinding met de SocketIO-server
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var socket = io();
 
-        // Luister naar nieuwe logoutput
         socket.on('console_update', function(data) {
             var consoleOutput = document.getElementById('console-output');
-            consoleOutput.value += data;
-            consoleOutput.scrollTop = consoleOutput.scrollHeight; // Scroll naar beneden
+            consoleOutput.value += data + '\n';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;  // Scroll naar beneden
         });
     </script>
 </body>

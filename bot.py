@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
+import logging
 import os
 import json
-import logging
 
 # Configuratie laden
 with open("config/config.json", "r") as config_file:
@@ -12,14 +12,6 @@ TOKEN = config["token"]
 PREFIX = config["prefix"]
 ACTIVITY = config["activity"]
 
-# Logging instellen
-logging.basicConfig(
-    filename="bot.log", 
-    filemode="a", 
-    format="%(asctime)s - %(levelname)s - %(message)s", 
-    level=logging.INFO
-)
-
 # Bot-intentie instellingen voor server- en berichtbeheer
 intents = discord.Intents.default()
 intents.message_content = True  # Nodig voor berichtinhoud
@@ -27,19 +19,27 @@ intents.message_content = True  # Nodig voor berichtinhoud
 # Bot prefix instellen en initialiseren
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-# Log elke gebeurtenis (gebruikerscommando's)
-@bot.event
-async def on_command(ctx):
-    logging.info(f"Commando uitgevoerd: {ctx.command} door {ctx.author} in {ctx.guild.name}")
-    print(f"Commando uitgevoerd: {ctx.command} door {ctx.author} in {ctx.guild.name}")
+# Logging instellen (logt naar de console en naar SocketIO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-# Log elke fout die optreedt tijdens de uitvoering van een commando
-@bot.event
-async def on_command_error(ctx, error):
-    logging.error(f"Fout bij het uitvoeren van commando {ctx.command}: {error}")
-    print(f"Fout bij het uitvoeren van commando {ctx.command}: {error}")
+# Maak een SocketIOHandler aan voor logging
+from app import socketio
+class SocketIOHandler(logging.Handler):
+    def emit(self, record):
+        log_message = self.format(record)
+        socketio.emit('console_update', log_message)  # Zend log naar de frontend
 
-# Log wanneer de bot succesvol inlogt
+# Voeg de SocketIOHandler toe aan de rootlogger
+socketio_handler = SocketIOHandler()
+socketio_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+socketio_handler.setFormatter(formatter)
+logging.getLogger().addHandler(socketio_handler)
+
+# Bot is gereed en online
 @bot.event
 async def on_ready():
     logging.info("Bot is ingelogd als %s", bot.user)
@@ -56,7 +56,6 @@ async def on_ready():
                 except Exception as e:
                     logging.error("Fout bij het laden van %s.%s: %s", folder, filename[:-3], e)
 
-# Commando's laden vanuit mappen zoals moderation, games, etc.
 @bot.command(name="bothelp")
 async def bothelp(ctx):
     help_text = """
@@ -65,7 +64,6 @@ async def bothelp(ctx):
     - !bothelp: Toon dit help-bericht
     """
     await ctx.send(help_text)
-    logging.info("Help commando uitgevoerd door %s in %s", ctx.author, ctx.guild.name)
 
 # Voeg de economy extensie toe
 from economy.economy import Economy
