@@ -1,0 +1,1 @@
+[PM2][ERROR] Script not found: D:\Github\Discord-bot-new\app.py

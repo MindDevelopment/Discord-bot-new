@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
-    <script src="{{ url_for('static', filename='theme.js') }}"></script>
-    <title>Dashboard</title>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Discord Bot</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -19,69 +18,148 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Dark Mode Switch -->
-    <div class="theme-switch-wrapper fixed-top">
-        <div class="theme-switch">
-            <input type="checkbox" id="theme-switch">
-            <label for="theme-switch" class="theme-switch-label"></label>
-        </div>
-    </div>
+    <!-- Dashboard Container -->
+    <div class="container">
+        <h2 class="mb-4">Welkom, {{ user }}</h2>
 
-    <!-- Dashboard Content -->
-    <div class="container mt-5">
-        <h2 class="mb-4">Welcome, {{ user }}</h2>
-        <div class="card mt-4">
+        <!-- Bot Status Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span>Bot Status</span>
+                <span id="bot-status" class="badge {{ 'bg-success' if bot_status == 'online' else 'bg-danger' }}">
+                    {{ bot_status }}
+                </span>
+            </div>
+            <div class="card-body d-flex justify-content-center">
+                <form method="POST" action="/start_bot" class="mx-2">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-play"></i> Start Bot</button>
+                </form>
+                <form method="POST" action="/stop_bot" class="mx-2">
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-stop"></i> Stop Bot</button>
+                </form>
+                <form method="POST" action="/restart_bot" class="mx-2">
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-redo"></i> Restart Bot</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bot Info Card -->
+        <div class="card mb-4">
             <div class="card-header bg-info text-white">Bot Informatie</div>
             <div class="card-body">
-                <ul>
-                    <li><strong>Bot Versie:</strong> {{ bot_version }}</li>
-                    <li><strong>CPU Gebruik:</strong> {{ cpu_usage }}%</li>
-                    <li><strong>Geheugen Gebruik:</strong> {{ memory_usage }}%</li>
-                    <li><strong>Uptime:</strong> {{ uptime }}</li>
-                    <li><strong>Platform:</strong> {{ platform }}</li>
-                    <li><strong>Bot draait op:</strong> {{ bot_machine }}</li>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Bot Versie:</strong> 1.0.0</li>
+                    <li class="list-group-item"><strong>CPU Gebruik:</strong> <span id="cpu-usage">0%</span></li>
+                    <li class="list-group-item"><strong>Geheugen Gebruik:</strong> <span id="memory-usage">0%</span></li>
+                    <li class="list-group-item"><strong>Uptime:</strong> <span id="bot-uptime">00:00:00</span></li>
+                    <li class="list-group-item"><strong>Platform:</strong> Windows</li>
+                    <li class="list-group-item"><strong>Bot draait op:</strong> machine-001</li>
                 </ul>
             </div>
         </div>
-        <div class="card mt-4">
-            <div class="card-header bg-primary text-white">Console Output</div>
+
+        <!-- Console Output -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <span>Console Output</span>
+                <select id="log-filter" class="form-select w-auto">
+                    <option value="all">Alle</option>
+                    <option value="info">Info</option>
+                    <option value="error">Fouten</option>
+                </select>
+            </div>
             <div class="card-body">
-                <textarea id="console-output" class="form-control" readonly></textarea>
+                <textarea id="console-output" class="form-control" rows="10" readonly></textarea>
             </div>
         </div>
-        <div class="d-flex justify-content-center mt-4">
-            <form method="POST" action="/start_bot">
-                <button type="submit" class="btn btn-success mx-2"><i class="fas fa-play"></i> Start Bot</button>
-            </form>
-            <form method="POST" action="/stop_bot">
-                <button type="submit" class="btn btn-danger mx-2"><i class="fas fa-stop"></i> Stop Bot</button>
-            </form>
-            <form method="POST" action="/restart_bot">
-                <button type="submit" class="btn btn-warning mx-2"><i class="fas fa-redo"></i> Restart Bot</button>
-            </form>
+
+        <!-- System Metrics Card -->
+        <div class="card">
+            <div class="card-header bg-dark text-white">Systeemstatistieken</div>
+            <div class="card-body">
+                <canvas id="system-metrics" width="400" height="200"></canvas>
+            </div>
         </div>
     </div>
 
+    <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Script -->
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
-        socket.on('console_update', function(data) {
+
+        // Console Output Updates
+        socket.on('console_output', function(data) {
             var consoleOutput = document.getElementById('console-output');
-            consoleOutput.value += data;
+            consoleOutput.value += data.data + "\n";
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
+
+        // Metrics Chart
+        const ctx = document.getElementById('system-metrics').getContext('2d');
+        const metricsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'CPU Gebruik (%)',
+                        data: [],
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Geheugen Gebruik (%)',
+                        data: [],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        fill: false,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Tijd' } },
+                    y: { title: { display: true, text: 'Gebruik (%)' } }
+                }
+            }
+        });
+
+        async function updateMetrics() {
+            const response = await fetch('/get_metrics');
+            const data = await response.json();
+
+            const now = new Date().toLocaleTimeString();
+            metricsChart.data.labels.push(now);
+            metricsChart.data.datasets[0].data.push(data.cpu_usage);
+            metricsChart.data.datasets[1].data.push(data.memory_usage);
+
+            // Update CPU and Memory Usage on Dashboard
+            document.getElementById('cpu-usage').innerText = `${data.cpu_usage}%`;
+            document.getElementById('memory-usage').innerText = `${data.memory_usage}%`;
+            document.getElementById('bot-uptime').innerText = data.bot_uptime;
+
+            if (metricsChart.data.labels.length > 10) {
+                metricsChart.data.labels.shift();
+                metricsChart.data.datasets.forEach(dataset => dataset.data.shift());
+            }
+
+            metricsChart.update();
+        }
+
+        setInterval(updateMetrics, 5000);
     </script>
 </body>
 </html>
