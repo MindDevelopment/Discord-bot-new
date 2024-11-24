@@ -227,3 +227,15 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 02:38:23,495 - INFO - Succesvol geladen: commands.ping
 2024-11-20 02:38:23,500 - INFO - Succesvol geladen: games.slot
 2024-11-20 02:38:23,501 - INFO - Succesvol geladen: economy.economy
+Flask Dashboard gestart.
+ * Debugger is active!
+ * Debugger PIN: 219-867-935
+Onverwachte fout in stream_console: Server.emit() got an unexpected keyword argument 'broadcast'
+ * Detected change in 'D:\\Github\\Discord-bot-new\\dashboard\\app.py', reloading
+2024-11-24 19:44:33,480 - INFO - logging in using static token
+2024-11-24 19:44:34,404 - INFO - Shard ID None has connected to Gateway (Session ID: 673748a68c0ad99740ece0eda75cbed9).
+2024-11-24 19:44:36,440 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 19:44:36,442 - INFO - Succesvol geladen: commands.ping
+2024-11-24 19:44:36,444 - INFO - Succesvol geladen: games.slot
+2024-11-24 19:44:36,458 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 19:44:36,460 - INFO - Succesvol geladen: economy.economy

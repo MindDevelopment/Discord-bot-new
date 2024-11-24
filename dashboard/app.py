@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_socketio import SocketIO, emit
 import subprocess
 import threading
@@ -9,118 +9,101 @@ import time
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# Configureren van SocketIO
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Gebruikersinformatie
 users = {'Daan': 'Daan123'}
 
 # PM2 pad configuratie
-PM2_PATH = "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\pm2.cmd"  # Pas dit pad aan als nodig
+PM2_PATH = "C:\\Users\\daans\\AppData\\Roaming\\npm\\pm2.cmd"
+LOG_FILE_PATH = "bot.log"
+
+bot_status = False
 
 # PM2 commando's
 def pm2_start():
-    # Specificeer de naam van de applicatie expliciet
+    global bot_status
     subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot'], check=True)
+    bot_status = True
 
 def pm2_stop():
+    global bot_status
     subprocess.run([PM2_PATH, 'stop', 'discord-bot'], check=True)
+    bot_status = False
 
 def pm2_restart():
+    global bot_status
     subprocess.run([PM2_PATH, 'restart', 'discord-bot'], check=True)
+    bot_status = True
 
 def stream_console():
-    """Stream de console output naar de webclient."""
-    log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+    """Streamt console-uitvoer naar de frontend via SocketIO."""
+    if not os.path.exists(LOG_FILE_PATH):
+        with open(LOG_FILE_PATH, 'w'): pass
+
+    with open(LOG_FILE_PATH, 'r') as log_file:
+        log_file.seek(0, os.SEEK_END)
+        while True:
+            line = log_file.readline()
+            if line:
+                socketio.emit('console_output', {'data': line})
+            else:
+                time.sleep(0.1)
+
+@app.route('/bot_status', methods=['GET'])
+def get_bot_status():
+    """Geeft de huidige botstatus terug aan de frontend."""
+    global bot_status
     try:
-        with open(log_path, "r") as log_file:
-            while True:
-                # Lees nieuwe regels toe aan het bestand
-                new_line = log_file.readline()
-                if new_line:
-                    socketio.emit('console_update', new_line)  # Stuur elke nieuwe regel naar de client
-                time.sleep(1)  # 1 seconde pauze tussen updates
+        output = subprocess.check_output([PM2_PATH, 'status', 'discord-bot'], text=True)
+        bot_status = "online" in output.lower()
     except Exception as e:
-        print(f"Error reading log: {e}")
-
-def get_system_info():
-    """Haal systeeminformatie op, zoals CPU, geheugen en uptime."""
-    # CPU gebruik
-    cpu_usage = psutil.cpu_percent(interval=1)
-    
-    # Geheugen gebruik
-    memory_info = psutil.virtual_memory()
-    memory_usage = memory_info.percent
-    
-    # Uptime (in seconden)
-    uptime_seconds = time.time() - psutil.boot_time()
-    uptime = str(time.strftime('%H:%M:%S', time.gmtime(uptime_seconds)))
-    
-    # Platforminformatie
-    platform = os.name  # 'posix' voor Linux/Mac, 'nt' voor Windows
-    
-    # Machine informatie (bijv. systeem)
-    bot_machine = os.uname().nodename if hasattr(os, 'uname') else 'N/A'
-    
-    # Bot versie (bijvoorbeeld een statische versie of via een andere manier ophalen)
-    bot_version = "1.0.0"  # Hier kun je de werkelijke versie instellen
-
-    return {
-        'cpu_usage': cpu_usage,
-        'memory_usage': memory_usage,
-        'uptime': uptime,
-        'platform': platform,
-        'bot_machine': bot_machine,
-        'bot_version': bot_version
-    }
+        bot_status = False
+    return jsonify({'bot_status': bot_status})
 
 @app.route('/start_bot', methods=['POST'])
 def start_bot():
     try:
         pm2_start()
-        return redirect(url_for('dashboard'))
+        return jsonify({'success': True, 'message': 'Bot gestart.'})
     except Exception as e:
-        return f"Error starting bot: {e}"
+        return jsonify({'success': False, 'message': f'Fout bij starten: {e}'})
 
 @app.route('/stop_bot', methods=['POST'])
 def stop_bot():
     try:
         pm2_stop()
-        return redirect(url_for('dashboard'))
+        return jsonify({'success': True, 'message': 'Bot gestopt.'})
     except Exception as e:
-        return f"Error stopping bot: {e}"
+        return jsonify({'success': False, 'message': f'Fout bij stoppen: {e}'})
 
 @app.route('/restart_bot', methods=['POST'])
 def restart_bot():
     try:
         pm2_restart()
-        return redirect(url_for('dashboard'))
+        return jsonify({'success': True, 'message': 'Bot opnieuw gestart.'})
     except Exception as e:
-        return f"Error restarting bot: {e}"
+        return jsonify({'success': False, 'message': f'Fout bij herstarten: {e}'})
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-    
-    system_info = get_system_info()  # Haal de systeeminformatie op
-    return render_template('dashboard.html', user=session['username'], **system_info)
+    return render_template('dashboard.html', user=session['username'])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-
         if username in users and users[username] == password:
             session['username'] = username
             return redirect(url_for('dashboard'))
-        else:
-            return render_template('login.html', error="Invalid username or password.")
+        return render_template('login.html', error="Ongeldige gebruikersnaam of wachtwoord.")
     return render_template('login.html')
 
 @app.route('/logout')
@@ -129,8 +112,5 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    # Start de console streaming in een aparte thread
     threading.Thread(target=stream_console, daemon=True).start()
-    
-    # Start de server met SocketIO
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)

@@ -1,0 +1,8 @@
+{
+  "token": "",
+  "prefix": "!",
+  "activity": "Aan het spelen!",
+  "client_id": "1303793063491145773",  // Je Discord client ID
+  "client_secret": "dHCG53L3OtkS3ePoGQgXKx5J5QgJBPat",  // Je Discord client secret
+  "redirect_uri": "http://localhost:5000/callback"  // De redirect URI voor OAuth2
+}

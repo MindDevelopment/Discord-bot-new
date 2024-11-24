@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import psutil
 import datetime
-import logging
 import platform
 
 # Informatie command
@@ -34,6 +33,6 @@ class Info(commands.Cog):
         uptime = datetime.datetime.now() - boot_time
         return str(uptime).split('.')[0]  # Uptime als "X dagen, X uren, etc."
 
-
+# De setup functie hoort zonder async/await
 def setup(bot):
     bot.add_cog(Info(bot))
