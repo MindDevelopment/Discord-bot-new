@@ -227,3 +227,10 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 02:38:23,495 - INFO - Succesvol geladen: commands.ping
 2024-11-20 02:38:23,500 - INFO - Succesvol geladen: games.slot
 2024-11-20 02:38:23,501 - INFO - Succesvol geladen: economy.economy
+2024-11-24 21:15:34,666 - INFO - logging in using static token
+2024-11-24 21:15:35,611 - INFO - Shard ID None has connected to Gateway (Session ID: 2e25d656416d07ec28d78083d3c508a4).
+2024-11-24 21:15:37,646 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 21:15:37,648 - INFO - Succesvol geladen: commands.ping
+2024-11-24 21:15:37,650 - INFO - Succesvol geladen: games.slot
+2024-11-24 21:15:37,665 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 21:15:37,667 - INFO - Succesvol geladen: economy.economy
