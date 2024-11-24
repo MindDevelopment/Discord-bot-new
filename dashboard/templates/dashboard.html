@@ -25,42 +25,25 @@
         </div>
     </nav>
 
-    <!-- Dashboard Container -->
-    <div class="container">
-        <h2 class="mb-4">Welkom, {{ user }}</h2>
-
-        <!-- Bot Status Card -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <span>Bot Status</span>
-                <span id="bot-status" class="badge {{ 'bg-success' if bot_status == 'online' else 'bg-danger' }}">
-                    {{ bot_status }}
-                </span>
-            </div>
-            <div class="card-body d-flex justify-content-center">
-                <form method="POST" action="/start_bot" class="mx-2">
-                    <button type="submit" class="btn btn-success"><i class="fas fa-play"></i> Start Bot</button>
-                </form>
-                <form method="POST" action="/stop_bot" class="mx-2">
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-stop"></i> Stop Bot</button>
-                </form>
-                <form method="POST" action="/restart_bot" class="mx-2">
-                    <button type="submit" class="btn btn-warning"><i class="fas fa-redo"></i> Restart Bot</button>
-                </form>
-            </div>
+    <!-- Dark Mode Switch -->
+    <div class="theme-switch-wrapper fixed-top">
+        <div class="theme-switch">
+            <input type="checkbox" id="theme-switch">
+            <label for="theme-switch" class="theme-switch-label"></label>
         </div>
+    </div>
 
         <!-- Bot Info Card -->
         <div class="card mb-4">
             <div class="card-header bg-info text-white">Bot Informatie</div>
             <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>Bot Versie:</strong> 1.0.0</li>
-                    <li class="list-group-item"><strong>CPU Gebruik:</strong> <span id="cpu-usage">0%</span></li>
-                    <li class="list-group-item"><strong>Geheugen Gebruik:</strong> <span id="memory-usage">0%</span></li>
-                    <li class="list-group-item"><strong>Uptime:</strong> <span id="bot-uptime">00:00:00</span></li>
-                    <li class="list-group-item"><strong>Platform:</strong> Windows</li>
-                    <li class="list-group-item"><strong>Bot draait op:</strong> machine-001</li>
+                <ul>
+                    <li><strong>Bot Versie:</strong> {{ bot_version }}</li>
+                    <li><strong>CPU Gebruik:</strong> {{ cpu_usage }}%</li>
+                    <li><strong>Geheugen Gebruik:</strong> {{ memory_usage }}%</li>
+                    <li><strong>Uptime:</strong> {{ uptime }}</li>
+                    <li><strong>Platform:</strong> {{ platform }}</li>
+                    <li><strong>Bot draait op:</strong> {{ bot_machine }}</li>
                 </ul>
             </div>
         </div>
@@ -104,62 +87,6 @@
             consoleOutput.value += data.data + "\n";
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
-
-        // Metrics Chart
-        const ctx = document.getElementById('system-metrics').getContext('2d');
-        const metricsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    {
-                        label: 'CPU Gebruik (%)',
-                        data: [],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Geheugen Gebruik (%)',
-                        data: [],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        fill: false,
-                        tension: 0.1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: 'Tijd' } },
-                    y: { title: { display: true, text: 'Gebruik (%)' } }
-                }
-            }
-        });
-
-        async function updateMetrics() {
-            const response = await fetch('/get_metrics');
-            const data = await response.json();
-
-            const now = new Date().toLocaleTimeString();
-            metricsChart.data.labels.push(now);
-            metricsChart.data.datasets[0].data.push(data.cpu_usage);
-            metricsChart.data.datasets[1].data.push(data.memory_usage);
-
-            // Update CPU and Memory Usage on Dashboard
-            document.getElementById('cpu-usage').innerText = `${data.cpu_usage}%`;
-            document.getElementById('memory-usage').innerText = `${data.memory_usage}%`;
-            document.getElementById('bot-uptime').innerText = data.bot_uptime;
-
-            if (metricsChart.data.labels.length > 10) {
-                metricsChart.data.labels.shift();
-                metricsChart.data.datasets.forEach(dataset => dataset.data.shift());
-            }
-
-            metricsChart.update();
-        }
-
-        setInterval(updateMetrics, 5000);
     </script>
 </body>
 </html>

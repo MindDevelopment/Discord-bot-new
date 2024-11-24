@@ -227,29 +227,3 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-20 02:38:23,495 - INFO - Succesvol geladen: commands.ping
 2024-11-20 02:38:23,500 - INFO - Succesvol geladen: games.slot
 2024-11-20 02:38:23,501 - INFO - Succesvol geladen: economy.economy
-Flask Dashboard gestart.
- * Debugger is active!
- * Debugger PIN: 219-867-935
-Onverwachte fout in stream_console: Server.emit() got an unexpected keyword argument 'broadcast'
- * Detected change in 'D:\\Github\\Discord-bot-new\\dashboard\\app.py', reloading
-2024-11-24 19:44:33,480 - INFO - logging in using static token
-2024-11-24 19:44:34,404 - INFO - Shard ID None has connected to Gateway (Session ID: 673748a68c0ad99740ece0eda75cbed9).
-2024-11-24 19:44:36,440 - INFO - Bot is ingelogd als MindOfBot#2494
-2024-11-24 19:44:36,442 - INFO - Succesvol geladen: commands.ping
-2024-11-24 19:44:36,444 - INFO - Succesvol geladen: games.slot
-2024-11-24 19:44:36,458 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
-2024-11-24 19:44:36,460 - INFO - Succesvol geladen: economy.economy
-2024-11-24 20:43:28,698 - INFO - logging in using static token
-2024-11-24 20:43:29,665 - INFO - Shard ID None has connected to Gateway (Session ID: 80124b0395e9fc663d971a8ebca0214b).
-2024-11-24 20:43:31,685 - INFO - Bot is ingelogd als MindOfBot#2494
-2024-11-24 20:43:31,687 - INFO - Succesvol geladen: commands.ping
-2024-11-24 20:43:31,689 - INFO - Succesvol geladen: games.slot
-2024-11-24 20:43:31,710 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
-2024-11-24 20:43:31,711 - INFO - Succesvol geladen: economy.economy
-2024-11-24 20:44:02,593 - INFO - logging in using static token
-2024-11-24 20:44:03,483 - INFO - Shard ID None has connected to Gateway (Session ID: a06addfa5405e42ecfbab9e9f006c4d7).
-2024-11-24 20:44:05,495 - INFO - Bot is ingelogd als MindOfBot#2494
-2024-11-24 20:44:05,497 - INFO - Succesvol geladen: commands.ping
-2024-11-24 20:44:05,499 - INFO - Succesvol geladen: games.slot
-2024-11-24 20:44:05,515 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
-2024-11-24 20:44:05,516 - INFO - Succesvol geladen: economy.economy

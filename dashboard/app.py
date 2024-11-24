@@ -37,25 +37,16 @@ def pm2_restart():
     bot_status = True
 
 def stream_console():
-    """Streamt console-uitvoer naar de frontend via SocketIO."""
-    if not os.path.exists(LOG_FILE_PATH):
-        with open(LOG_FILE_PATH, 'w'): pass
-
-    with open(LOG_FILE_PATH, 'r') as log_file:
-        log_file.seek(0, os.SEEK_END)
-        while True:
-            line = log_file.readline()
-            if line:
-                socketio.emit('console_output', {'data': line})
-            else:
-                time.sleep(0.1)
-
-@app.route('/bot_status', methods=['GET'])
-def get_bot_status():
-    """Geeft de huidige botstatus terug aan de frontend."""
+    """Stream de console output naar de webclient."""
+    log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
     try:
-        output = subprocess.check_output([PM2_PATH, 'status', 'discord-bot'], text=True)
-        bot_status = "online" in output.lower()
+        with open(log_path, "r") as log_file:
+            while True:
+                # Lees nieuwe regels toe aan het bestand
+                new_line = log_file.readline()
+                if new_line:
+                    socketio.emit('console_update', new_line)  # Stuur elke nieuwe regel naar de client
+                time.sleep(1)  # 1 seconde pauze tussen updates
     except Exception as e:
         bot_status = False
     return jsonify({'bot_status': bot_status})
@@ -82,44 +73,19 @@ def restart_bot():
         pm2_restart()
         return jsonify({'success': True, 'message': 'Bot opnieuw gestart.'})
     except Exception as e:
-        return jsonify({'success': False, 'message': f'Fout bij herstarten: {e}'})
-
-@app.route('/get_metrics')
-def get_metrics():
-    # Verkrijg systeemstatistieken
-    cpu_usage = psutil.cpu_percent(interval=1)
-    memory_info = psutil.virtual_memory()
-
-    # Verkrijg bot uptime en andere info
-    uptime = subprocess.check_output([PM2_PATH, 'show', 'discord-bot', '--json'], text=True)
-    uptime_data = json.loads(uptime)
-    bot_uptime = uptime_data[0]["pm2_env"]["pm_uptime"]
-
-    return jsonify({
-        'cpu_usage': cpu_usage,
-        'memory_usage': memory_info.percent,
-        'bot_uptime': time.strftime('%H:%M:%S', time.gmtime(bot_uptime / 1000))  # Convert ms to seconds
-    })
+        return f"Error restarting bot: {e}"
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-
-    # Verkrijg de actuele status van de bot via de PM2-statusfunctie
-    bot_status_response = get_bot_status()
     
-    # Haal de JSON-gegevens uit de Response
-    bot_status_data = bot_status_response.get_json()
-    
-    # Verkrijg de bot status uit de JSON
-    bot_status = "online" if bot_status_data['bot_status'] else "offline"
-    
-    return render_template('dashboard.html', user=session['username'], bot_status=bot_status)
+    system_info = get_system_info()  # Haal de systeeminformatie op
+    return render_template('dashboard.html', user=session['username'], **system_info)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
