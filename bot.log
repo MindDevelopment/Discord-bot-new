@@ -234,3 +234,80 @@ FileNotFoundError: [WinError 3] The system cannot find the path specified: 'mode
 2024-11-24 21:15:37,650 - INFO - Succesvol geladen: games.slot
 2024-11-24 21:15:37,665 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
 2024-11-24 21:15:37,667 - INFO - Succesvol geladen: economy.economy
+2024-11-24 21:25:57,339 - INFO - logging in using static token
+2024-11-24 21:25:58,231 - INFO - Shard ID None has connected to Gateway (Session ID: b74982d60c75caca0f53770c691bb057).
+2024-11-24 21:26:00,244 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 21:26:00,246 - INFO - Succesvol geladen: commands.ping
+2024-11-24 21:26:00,248 - INFO - Succesvol geladen: games.slot
+2024-11-24 21:26:00,263 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 21:26:00,264 - INFO - Succesvol geladen: economy.economy
+2024-11-24 21:44:45,898 - INFO - logging in using static token
+2024-11-24 21:44:46,712 - INFO - Shard ID None has connected to Gateway (Session ID: 51e85c6326ead31e026b01626448a5d1).
+2024-11-24 21:44:48,728 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 21:44:48,730 - INFO - Succesvol geladen: commands.ping
+2024-11-24 21:44:48,732 - INFO - Succesvol geladen: games.slot
+2024-11-24 21:44:48,748 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 21:44:48,750 - INFO - Succesvol geladen: economy.economy
+2024-11-24 21:56:50,805 - ERROR - Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "informatie" is not found
+2024-11-24 22:35:38,405 - INFO - logging in using static token
+2024-11-24 22:35:39,230 - INFO - Shard ID None has connected to Gateway (Session ID: a966efd36118f4d1cd0b76e55ce475ff).
+2024-11-24 22:35:41,262 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 22:35:41,264 - INFO - Succesvol geladen: commands.ping
+2024-11-24 22:35:41,266 - INFO - Succesvol geladen: games.slot
+2024-11-24 22:35:41,293 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 22:35:41,296 - INFO - Succesvol geladen: economy.economy
+2024-11-24 23:13:14,617 - INFO - logging in using static token
+2024-11-24 23:13:15,432 - INFO - Shard ID None has connected to Gateway (Session ID: 9096f7d4f0db87b86f5f512bda23b982).
+2024-11-24 23:13:17,446 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 23:13:17,448 - INFO - Succesvol geladen: commands.ping
+2024-11-24 23:13:17,450 - INFO - Succesvol geladen: games.slot
+2024-11-24 23:13:17,465 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:13:17,996 - ERROR - Fout bij het laden van music.music: Extension 'music.music' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:13:17,997 - INFO - Succesvol geladen: economy.economy
+2024-11-24 23:13:57,066 - ERROR - Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "play" is not found
+2024-11-24 23:15:32,392 - INFO - logging in using static token
+2024-11-24 23:15:33,317 - INFO - Shard ID None has connected to Gateway (Session ID: 6257aa3503c00b3eca54417eed3bf2a1).
+2024-11-24 23:15:35,334 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 23:15:35,336 - INFO - Succesvol geladen: commands.ping
+2024-11-24 23:15:35,338 - INFO - Succesvol geladen: games.slot
+2024-11-24 23:15:35,354 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:15:35,783 - ERROR - Fout bij het laden van music.music: Extension 'music.music' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:15:35,785 - INFO - Succesvol geladen: economy.economy
+2024-11-24 23:15:59,950 - ERROR - Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "play" is not found
+2024-11-24 23:33:57,659 - INFO - logging in using static token
+2024-11-24 23:33:58,455 - INFO - Shard ID None has connected to Gateway (Session ID: 4bbb4ae1eaf52a93b937f1d8944c6a48).
+2024-11-24 23:34:00,477 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 23:34:00,480 - INFO - Succesvol geladen: commands.ping
+2024-11-24 23:34:00,481 - INFO - Succesvol geladen: games.slot
+2024-11-24 23:34:00,496 - ERROR - Fout bij het laden van information.informatie: Extension 'information.informatie' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:34:00,961 - ERROR - Fout bij het laden van music.music: Extension 'music.music' raised an error: TypeError: object NoneType can't be used in 'await' expression
+2024-11-24 23:34:00,962 - INFO - Succesvol geladen: economy.economy
+2024-11-24 23:34:07,861 - ERROR - Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "play" is not found
+2024-11-24 23:36:50,616 - INFO - logging in using static token
+2024-11-24 23:36:52,669 - INFO - Shard ID None has connected to Gateway (Session ID: 71249b6617a70f5ae135912d8fcda60e).
+2024-11-24 23:36:54,689 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 23:36:54,689 - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Users\daans\AppData\Roaming\Python\Python312\site-packages\discord\client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "D:\Github\Discord-bot-new\bot.py", line 36, in on_ready
+    await bot.add_cog(Music(bot))
+                      ^^^^^
+NameError: name 'Music' is not defined
+2024-11-24 23:37:19,509 - INFO - logging in using static token
+2024-11-24 23:37:20,352 - INFO - Shard ID None has connected to Gateway (Session ID: 60979239e193fa780dcfdf20d7fd416b).
+2024-11-24 23:37:22,373 - INFO - Bot is ingelogd als MindOfBot#2494
+2024-11-24 23:37:22,374 - ERROR - Ignoring exception in on_ready
+Traceback (most recent call last):
+  File "C:\Users\daans\AppData\Roaming\Python\Python312\site-packages\discord\client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "D:\Github\Discord-bot-new\bot.py", line 36, in on_ready
+    await bot.add_cog(music(bot))
+                      ^^^^^
+NameError: name 'music' is not defined
+2024-11-25 00:02:32,373 - INFO - Shard ID None has successfully RESUMED session 60979239e193fa780dcfdf20d7fd416b.
+2024-11-25 00:29:05,810 - INFO - Shard ID None has successfully RESUMED session 60979239e193fa780dcfdf20d7fd416b.

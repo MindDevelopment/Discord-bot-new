@@ -5,6 +5,7 @@ import threading
 import os
 import psutil
 import time
+import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -23,8 +24,13 @@ bot_status = False
 # PM2 commando's
 def pm2_start():
     global bot_status
-    subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot'], check=True)
-    bot_status = True
+    try:
+        subprocess.run([PM2_PATH, 'start', 'bot.py', '--name', 'discord-bot'], check=True)
+        bot_status = True
+    except subprocess.CalledProcessError as e:
+        print(f"Fout bij starten bot: {e}")
+        raise  # Verwerk de fout verder of geef de fout door aan de gebruiker
+
 
 def pm2_stop():
     global bot_status
@@ -37,18 +43,27 @@ def pm2_restart():
     bot_status = True
 
 def stream_console():
-    """Stream de console output naar de webclient."""
-    log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bot.log")
+    """Streamt console-uitvoer naar de frontend via SocketIO."""
+    if not os.path.exists(LOG_FILE_PATH):
+        with open(LOG_FILE_PATH, 'w'): pass
+
+    with open(LOG_FILE_PATH, 'r') as log_file:
+        log_file.seek(0, os.SEEK_END)
+        while True:
+            line = log_file.readline()
+            if line:
+                socketio.emit('console_output', {'data': line})
+            else:
+                time.sleep(0.1)
+
+@app.route('/bot_status', methods=['GET'])
+def get_bot_status():
+    """Geeft de huidige botstatus terug aan de frontend."""
     try:
-        with open(log_path, "r") as log_file:
-            while True:
-                # Lees nieuwe regels toe aan het bestand
-                new_line = log_file.readline()
-                if new_line:
-                    socketio.emit('console_update', new_line)  # Stuur elke nieuwe regel naar de client
-                time.sleep(1)  # 1 seconde pauze tussen updates
+        output = subprocess.check_output([PM2_PATH, 'status', 'discord-bot'], text=True)
+        bot_status = "online" if "online" in output.lower() else "offline"
     except Exception as e:
-        bot_status = False
+        bot_status = "offline"
     return jsonify({'bot_status': bot_status})
 
 @app.route('/start_bot', methods=['POST'])
@@ -73,19 +88,39 @@ def restart_bot():
         pm2_restart()
         return jsonify({'success': True, 'message': 'Bot opnieuw gestart.'})
     except Exception as e:
-        return f"Error restarting bot: {e}"
+        return jsonify({'success': False, 'message': f'Fout bij herstarten: {e}'})
+
+# Sla de starttijd van de bot op (bijvoorbeeld bij het opstarten van de app)
+bot_start_time = time.time()
+
+@app.route('/get_metrics')
+def get_metrics():
+    """Verkrijg systeemstatistieken (CPU, geheugen, bot uptime)"""
+    cpu_usage = psutil.cpu_percent(interval=1)
+    memory_info = psutil.virtual_memory()
+
+    # Bereken de uptime van de bot door het verschil met de starttijd te nemen
+    bot_uptime_seconds = time.time() - bot_start_time
+    bot_uptime = time.strftime('%H:%M:%S', time.gmtime(bot_uptime_seconds))
+
+    return jsonify({
+        'cpu_usage': cpu_usage,
+        'memory_usage': memory_info.percent,
+        'bot_uptime': bot_uptime  # Uptime wordt berekend vanaf het starten van de bot
+    })
+
+
 
 @app.route('/')
 def index():
-    return redirect(url_for('dashboard'))
+    return render_template('index.html')
 
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-    
-    system_info = get_system_info()  # Haal de systeeminformatie op
-    return render_template('dashboard.html', user=session['username'], **system_info)
+
+    return render_template('dashboard.html', user=session['username'])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -104,5 +139,6 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    # Start een achtergrondthread voor console-uitvoer
     threading.Thread(target=stream_console, daemon=True).start()
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)
